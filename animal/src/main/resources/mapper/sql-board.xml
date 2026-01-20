@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.animal.mapper.BoardMapper">
+
+    <!-- 공통 검색 조건 -->
+    <sql id="SearchWhere">
+        <where>
+            b.isactive = 1
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="search == 'title'">
+                        AND b.board_title LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="search == 'content'">
+                        AND b.board_content LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="search == 'titleContent'">
+                        AND (b.board_title LIKE CONCAT('%', #{keyword}, '%')
+                             OR b.board_content LIKE CONCAT('%', #{keyword}, '%'))
+                    </when>
+                    <when test="search == 'writer'">
+                        AND b.board_writer LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        AND (b.board_title LIKE CONCAT('%', #{keyword}, '%')
+                             OR b.board_content LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 전체 개수 -->
+    <select id="countBoards" resultType="long">
+        SELECT COUNT(*)
+        FROM board b
+        <include refid="SearchWhere"/>
+    </select>
+
+    <!-- 목록(페이지) -->
+    <select id="selectBoardPage" resultType="com.example.animal.dto.Board">
+        SELECT
+            b.board_no,
+            b.board_title,
+            b.board_writer,
+            b.member_no,
+            m.member_name,
+            b.create_date,
+            b.update_date
+        FROM board b
+        LEFT JOIN member m ON m.member_no = b.member_no
+        <include refid="SearchWhere"/>
+        ORDER BY b.board_no DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 상세 -->
+    <select id="selectBoardDetail" resultType="com.example.animal.dto.Board">
+        SELECT
+            b.board_no,
+            b.board_title,
+            b.board_content,
+            b.board_writer,
+            b.member_no,
+            m.member_name,
+            b.create_date,
+            b.update_date
+        FROM board b
+        LEFT JOIN member m ON m.member_no = b.member_no
+        WHERE b.board_no = #{boardNo}
+          AND b.isactive = 1
+    </select>
+
+    <!-- 등록 -->
+    <insert id="insertBoard" parameterType="com.example.animal.dto.Board" useGeneratedKeys="true" keyProperty="boardNo">
+        INSERT INTO board
+        (board_title, board_content, board_writer, member_no, isactive)
+        VALUES
+        (#{boardTitle}, #{boardContent}, #{boardWriter}, #{memberNo}, 1)
+    </insert>
+
+    <!-- 수정 -->
+    <update id="updateBoard">
+        UPDATE board
+        SET
+            board_title = #{board.boardTitle},
+            board_content = #{board.boardContent},
+            board_writer = #{board.boardWriter},
+            member_no = #{board.memberNo},
+            update_date = CURRENT_TIMESTAMP
+        WHERE board_no = #{boardNo}
+          AND isactive = 1
+    </update>
+
+    <!-- 삭제(소프트 삭제) -->
+    <update id="softDelete">
+        UPDATE board
+        SET isactive = 0,
+            update_date = CURRENT_TIMESTAMP
+        WHERE board_no = #{boardNo}
+          AND isactive = 1
+    </update>
+
+</mapper>
