@@ -45,3 +45,4 @@ CREATE TABLE villager (
     FOREIGN KEY (villager_type)
     REFERENCES villager_type_code(villager_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
