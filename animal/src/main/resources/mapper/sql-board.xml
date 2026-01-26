@@ -42,37 +42,40 @@
 
     <!-- 목록(페이지) -->
     <select id="selectBoardPage" resultType="com.example.animal.dto.Board">
-        SELECT
-            b.board_no,
-            b.board_title,
-            b.board_writer,
-            b.member_no,
-            m.member_name,
-            b.create_date,
-            b.update_date
-        FROM board b
-        LEFT JOIN member m ON m.member_no = b.member_no
-        <include refid="SearchWhere"/>
-        ORDER BY b.board_no DESC
-        LIMIT #{size} OFFSET #{offset}
-    </select>
+    SELECT
+        b.board_no,
+        b.board_title,
+        b.board_content,
+        b.board_writer,
+        b.member_no,
+        m.member_name,
+        b.isactive,
+        b.create_date,
+        b.update_date
+    FROM board b
+    LEFT JOIN member m ON m.member_no = b.member_no
+    <include refid="SearchWhere"/>
+    ORDER BY b.board_no DESC
+    LIMIT #{size} OFFSET #{offset}
+</select>
 
     <!-- 상세 -->
     <select id="selectBoardDetail" resultType="com.example.animal.dto.Board">
-        SELECT
-            b.board_no,
-            b.board_title,
-            b.board_content,
-            b.board_writer,
-            b.member_no,
-            m.member_name,
-            b.create_date,
-            b.update_date
-        FROM board b
-        LEFT JOIN member m ON m.member_no = b.member_no
-        WHERE b.board_no = #{boardNo}
-          AND b.isactive = 1
-    </select>
+    SELECT
+        b.board_no,
+        b.board_title,
+        b.board_content,
+        b.board_writer,
+        b.member_no,
+        m.member_name,
+        b.isactive,
+        b.create_date,
+        b.update_date
+    FROM board b
+    LEFT JOIN member m ON m.member_no = b.member_no
+    WHERE b.board_no = #{boardNo}
+      AND b.isactive = 1
+</select>
 
     <!-- 등록 -->
     <insert id="insertBoard" parameterType="com.example.animal.dto.Board" useGeneratedKeys="true" keyProperty="boardNo">
