@@ -104,4 +104,78 @@ select * from board
 select * from member;
 SHOW CREATE TABLE member;
 
-create Table test 
+create Table test;
+
+
+
+
+
+
+
+-- =========================================
+-- 1️⃣ 기존 테이블 삭제 (존재하면 삭제)
+-- =========================================
+DROP TABLE IF EXISTS board;
+DROP TABLE IF EXISTS villager;
+DROP TABLE IF EXISTS villager_type_code;
+DROP TABLE IF EXISTS member;
+
+-- =========================================
+-- 2️⃣ 테이블 생성
+-- =========================================
+
+-- 2-1. Member 테이블
+CREATE TABLE member (
+    member_no     INT AUTO_INCREMENT PRIMARY KEY,
+    member_id     VARCHAR(50)  NOT NULL,
+    member_pw     VARCHAR(100) NOT NULL,
+    member_name   VARCHAR(50)  NOT NULL,
+    member_email  VARCHAR(100),
+    isactive      TINYINT(1)   NOT NULL DEFAULT 1 COMMENT '0:비활성화, 1: 활성화',
+    create_date   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_date   DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2-2. Villager Type Code 테이블
+CREATE TABLE villager_type_code (
+    villager_type   TINYINT PRIMARY KEY,
+    type_name       VARCHAR(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2-3. Villager 테이블
+CREATE TABLE villager (
+    villager_no        INT AUTO_INCREMENT PRIMARY KEY,
+    villager_category  TINYINT(1)  NOT NULL COMMENT '1:일반, 2:특수', 
+    villager_type      TINYINT    NOT NULL,
+    villager_name      VARCHAR(50) NOT NULL,
+    villager_name_en   VARCHAR(50),
+    villager_name_jp   VARCHAR(50),
+    villager_image     VARCHAR(255),
+    villager_birth     VARCHAR(5),  -- 날짜 형식 변경
+    villager_sex       TINYINT(1)  COMMENT '0:여, 1:남',
+    villager_vote      INT         DEFAULT 0,
+    CONSTRAINT fk_villager_type
+    FOREIGN KEY (villager_type)
+    REFERENCES villager_type_code(villager_type)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2-4. Board 테이블
+CREATE TABLE board (
+    board_no INT AUTO_INCREMENT PRIMARY KEY,
+    board_title VARCHAR(300) NOT NULL,
+    board_content VARCHAR(3000) NOT NULL,
+    board_writer VARCHAR(100) NOT NULL,
+    create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_date DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    isactive TINYINT DEFAULT 1 COMMENT '0:비활성화, 1:활성화',
+    member_no INT,
+    CONSTRAINT fk_board_member
+    FOREIGN KEY (member_no)
+    REFERENCES member(member_no)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- =========================================
+-- 완료 메시지 (선택 사항)
+-- =========================================
+SELECT '모든 테이블 삭제 후 새로 생성 완료!' AS result;

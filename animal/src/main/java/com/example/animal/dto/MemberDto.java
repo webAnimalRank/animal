@@ -1,6 +1,6 @@
 package com.example.animal.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.apache.ibatis.type.Alias;
 
@@ -15,6 +15,6 @@ public class MemberDto {
     private String member_name;
     private String member_email;
     private int isactive;
-    private LocalDateTime create_date;
-    private LocalDateTime update_date;
+    private LocalDate create_date;
+    private LocalDate update_date;
 }

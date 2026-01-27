@@ -10,6 +10,7 @@
     	SELECT
 			member_no,
 			member_id,
+			member_pw,
 			member_name,
 			member_email,
 			isactive,
