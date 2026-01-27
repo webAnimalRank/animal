@@ -13,7 +13,7 @@ import com.example.animal.service.MemberService;
 
 
 @RestController
-@RequestMapping("/members")
+@RequestMapping("/api/members")
 @CrossOrigin(origins = "http://localhost:5173")
 public class MemberController {
     @Autowired

@@ -100,3 +100,8 @@ insert into villager (villager_category, villager_type, villager_name, villager_
 (1,1,'토미','Bones','トミ','tommy.png','08-04',1);
 
 select * from board
+
+select * from member;
+SHOW CREATE TABLE member;
+
+create Table test 

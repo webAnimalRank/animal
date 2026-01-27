@@ -16,6 +16,9 @@ public class MemberSerivceImpl implements MemberService {
 
     @Override
     public List<MemberDto> allMemberList() {
+        System.out.println(mm.allMemberList());
         return mm.allMemberList();
     }
+
+    
 }
