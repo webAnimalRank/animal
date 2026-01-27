@@ -46,7 +46,56 @@ CREATE TABLE villager (
     REFERENCES villager_type_code(villager_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-select * from board;
-select * from member;
+--  주민 생일 컬럼 형식 변경
+alter table villager MODIFY villager_birth VARCHAR(5);
+
+--데이터베이스
+--  MEMBER 
 insert into member (member_id, member_pw, member_name, member_email) values ('jisu123', 'password123', '김지수', 'jisu123@gmail.com');
+
+--  BOARD
 insert into board (board_title, board_content, board_writer, member_no) values ('첫번째 게시글', '안녕하세요 첫번째 게시글입니다.', '김지수', 1);
+--  VILLAGER_TYPE_CODE
+insert into villager_type_code (villager_type, type_name) values
+(1,'개'),
+(2,'개구리'),
+(3,'개미핥기'),
+(4,'고릴라'),
+(5,'고양이'),
+(6,'곰'),
+(7,'꼬마곰'),
+(8,'늑대'),
+(9,'다람쥐'),
+(10,'닭'),
+(11,'독수리'),
+(12,'돼지'),
+(13,'말'),
+(14,'문어'),
+(15,'사슴'),
+(16,'사자'),
+(17,'새'),
+(18,'생쥐'),
+(19,'소'),
+(20,'악어'),
+(21,'양'),
+(22,'염소'),
+(23,'오리'),
+(24,'원숭이'),
+(25,'캥거루'),
+(26,'코끼리'),
+(27,'코뿔소'),
+(28,'코알라'),
+(29,'타조'),
+(30,'토끼'),
+(31,'펭귄'),
+(32,'하마'),
+(33,'햄스터'),
+(34,'호랑이');
+
+--  VILLAGER
+insert into villager (villager_category, villager_type, villager_name, villager_name_en, villager_name_jp, villager_image, villager_birth, villager_sex) values
+(1,1,'럭키','Lucky','ラッキー','lucky.png','11-04',1),
+(1,1,'로빈','Biskit','ロビン','robin.png','05-13',1),
+(1,1,'존','Butch','ジョン','john.png','11-01',1),
+(1,1,'토미','Bones','トミ','tommy.png','08-04',1);
+
