@@ -99,3 +99,4 @@ insert into villager (villager_category, villager_type, villager_name, villager_
 (1,1,'존','Butch','ジョン','john.png','11-01',1),
 (1,1,'토미','Bones','トミ','tommy.png','08-04',1);
 
+select * from board
