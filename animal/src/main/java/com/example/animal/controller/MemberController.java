@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.animal.dto.MemberDto;
-import com.example.animal.service.MemberService1;
+import com.example.animal.service.MemberService;
 
 
 @RestController
 @RequestMapping("/members")
 public class MemberController {
     @Autowired
-    private MemberService1 ms;
+    private MemberService ms;
     
     @GetMapping
     public List<MemberDto> allMemberList() {
