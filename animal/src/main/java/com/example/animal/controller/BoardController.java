@@ -26,7 +26,7 @@ public class BoardController {
             @RequestParam(defaultValue = "titleContent") String search,
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "20") int size
     ) {
         List<Board> items = boardService.getBoards(search, keyword, page, size);
         long totalItems = boardService.getTotalBoards(search, keyword);
