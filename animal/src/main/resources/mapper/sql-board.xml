@@ -9,29 +9,31 @@
     <sql id="SearchWhere">
         <where>
             b.isactive = 1
+            AND b.board_kind = #{kind}
             <if test="keyword != null and keyword != ''">
                 <choose>
                     <when test="search == 'title'">
-                        AND b.board_title LIKE CONCAT('%', #{keyword}, '%')
+                    AND b.board_title LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <when test="search == 'content'">
-                        AND b.board_content LIKE CONCAT('%', #{keyword}, '%')
+                    AND b.board_content LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <when test="search == 'titleContent'">
-                        AND (b.board_title LIKE CONCAT('%', #{keyword}, '%')
-                             OR b.board_content LIKE CONCAT('%', #{keyword}, '%'))
+                    AND (b.board_title LIKE CONCAT('%', #{keyword}, '%')
+                        OR b.board_content LIKE CONCAT('%', #{keyword}, '%'))
                     </when>
                     <when test="search == 'writer'">
-                        AND b.board_writer LIKE CONCAT('%', #{keyword}, '%')
+                    AND b.board_writer LIKE CONCAT('%', #{keyword}, '%')
                     </when>
                     <otherwise>
-                        AND (b.board_title LIKE CONCAT('%', #{keyword}, '%')
-                             OR b.board_content LIKE CONCAT('%', #{keyword}, '%'))
+                    AND (b.board_title LIKE CONCAT('%', #{keyword}, '%')
+                        OR b.board_content LIKE CONCAT('%', #{keyword}, '%'))
                     </otherwise>
                 </choose>
             </if>
         </where>
     </sql>
+
 
     <!-- 전체 개수 -->
     <select id="countBoards" resultType="long">
@@ -42,47 +44,49 @@
 
     <!-- 목록(페이지) -->
     <select id="selectBoardPage" resultType="com.example.animal.dto.Board">
-SELECT
-    b.board_no,
-    b.board_title,
-    b.board_content,
-    b.board_writer,
-    b.member_no,
-    m.member_name,
-    b.isactive,
-    DATE(b.create_date) AS create_date,
-    DATE(b.update_date) AS update_date
-FROM board b
-LEFT JOIN member m ON m.member_no = b.member_no
-<include refid="SearchWhere"/>
-ORDER BY b.board_no DESC
-LIMIT #{size} OFFSET #{offset}
-</select>
+    SELECT
+        b.board_no,
+        b.board_title,
+        b.board_content,
+        b.board_writer,
+        b.board_kind,
+        b.member_no,
+        m.member_name,
+        b.isactive,
+        DATE(b.create_date) AS create_date,
+        DATE(b.update_date) AS update_date
+    FROM board b
+    LEFT JOIN member m ON m.member_no = b.member_no
+    <include refid="SearchWhere"/>
+    ORDER BY b.board_no DESC
+    LIMIT #{size} OFFSET #{offset}
+    </select>
 
     <!-- 상세 -->
     <select id="selectBoardDetail" resultType="com.example.animal.dto.Board">
-SELECT
-    b.board_no,
-    b.board_title,
-    b.board_content,
-    b.board_writer,
-    b.member_no,
-    m.member_name,
-    b.isactive,
-    DATE(b.create_date) AS create_date,
-    DATE(b.update_date) AS update_date
-FROM board b
-LEFT JOIN member m ON m.member_no = b.member_no
-WHERE b.board_no = #{boardNo}
-  AND b.isactive = 1
-</select>
+    SELECT
+        b.board_no,
+        b.board_title,
+        b.board_content,
+        b.board_writer,
+        b.board_kind,
+        b.member_no,
+        m.member_name,
+        b.isactive,
+        DATE(b.create_date) AS create_date,
+        DATE(b.update_date) AS update_date
+    FROM board b
+    LEFT JOIN member m ON m.member_no = b.member_no
+    WHERE b.board_no = #{boardNo}
+    AND b.isactive = 1
+    </select>
 
     <!-- 등록 -->
     <insert id="insertBoard" parameterType="com.example.animal.dto.Board" useGeneratedKeys="true" keyProperty="boardNo">
         INSERT INTO board
-        (board_title, board_content, board_writer, member_no, isactive)
+        (board_title, board_content, board_writer, board_kind, member_no, isactive)
         VALUES
-        (#{boardTitle}, #{boardContent}, #{boardWriter}, #{memberNo}, 1)
+        (#{boardTitle}, #{boardContent}, #{boardWriter}, #{boardKind}, #{memberNo}, 1)
     </insert>
 
     <!-- 수정 -->
@@ -92,6 +96,7 @@ WHERE b.board_no = #{boardNo}
             board_title = #{board.boardTitle},
             board_content = #{board.boardContent},
             board_writer = #{board.boardWriter},
+            board_kind = #{board.boardKind},
             member_no = #{board.memberNo},
             update_date = CURRENT_TIMESTAMP
         WHERE board_no = #{boardNo}

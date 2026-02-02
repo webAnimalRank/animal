@@ -23,13 +23,14 @@ public class BoardController {
     // GET /api/boards?search=title|content|titleContent|writer&keyword=...&page=1&size=10
     @GetMapping
     public Map<String, Object> list(
+            @RequestParam(defaultValue = "notice") String kind,
             @RequestParam(defaultValue = "titleContent") String search,
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        List<Board> items = boardService.getBoards(search, keyword, page, size);
-        long totalItems = boardService.getTotalBoards(search, keyword);
+        List<Board> items = boardService.getBoards(kind, search, keyword, page, size);
+        long totalItems = boardService.getTotalBoards(kind, search, keyword);
 
         int safeSize = Math.min(Math.max(size, 1), 50);
         int totalPages = (int) Math.ceil((double) totalItems / safeSize);

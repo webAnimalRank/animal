@@ -11,6 +11,8 @@ public class Board {
     private String boardWriter;
     private Integer memberNo;
     private Integer isactive;
+    
+    private String boardKind;
 
     private LocalDate createDate;
     private LocalDate updateDate;

@@ -6,8 +6,8 @@ import java.util.List;
 public interface BoardService {
 
     // 목록 + 검색 + 페이징
-    List<Board> getBoards(String search, String keyword, int page, int size);
-    long getTotalBoards(String search, String keyword);
+    List<Board> getBoards(String kind, String search, String keyword, int page, int size);
+    long getTotalBoards(String kind, String search, String keyword);
 
     // 상세
     Board getBoardDetail(int boardNo);

@@ -11,10 +11,12 @@ import com.example.animal.dto.Board;
 public interface BoardMapper {
 
     // 목록 페이징 + 검색
-    long countBoards(@Param("search") String search,
-                     @Param("keyword") String keyword);
+    long countBoards(@Param("kind") String kind,
+                    @Param("search") String search,
+                    @Param("keyword") String keyword);
 
-    List<Board> selectBoardPage(@Param("search") String search,
+    List<Board> selectBoardPage(@Param("kind") String kind,
+                                @Param("search") String search,
                                 @Param("keyword") String keyword,
                                 @Param("offset") int offset,
                                 @Param("size") int size);

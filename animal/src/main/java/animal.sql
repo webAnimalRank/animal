@@ -38,16 +38,13 @@ CREATE TABLE villager (
     villager_name_en   VARCHAR(50),
     villager_name_jp   VARCHAR(50),
     villager_image     VARCHAR(255),
-    villager_birth     DATE,
+    villager_birth     VARCHAR(5),
     villager_sex       TINYINT(1)  COMMENT '0:여, 1:남',
     villager_vote      INT         DEFAULT 0,
     CONSTRAINT fk_villager_type
     FOREIGN KEY (villager_type)
     REFERENCES villager_type_code(villager_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---  주민 생일 컬럼 형식 변경
-alter table villager MODIFY villager_birth VARCHAR(5);
 
 --데이터베이스
 --  MEMBER 
@@ -179,3 +176,8 @@ CREATE TABLE board (
 -- 완료 메시지 (선택 사항)
 -- =========================================
 SELECT '모든 테이블 삭제 후 새로 생성 완료!' AS result;
+ALTER TABLE board
+ADD COLUMN board_kind VARCHAR(20) NOT NULL DEFAULT 'notice';
+UPDATE board
+SET board_kind = 'notice'
+WHERE board_kind IS NULL OR board_kind = '';
