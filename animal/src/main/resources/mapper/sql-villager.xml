@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.animal.mapper.VillagerMapper">
+
+    <!-- 목록: 리스트(아이콘+이름) -->
+    <select id="selectVillagers" resultType="com.example.animal.dto.VillagerList">
+        SELECT
+            v.villager_no           AS villagerNo,
+            v.villager_name         AS villagerName,
+            v.villager_image_icon   AS villagerImageIcon
+        FROM villager v
+        ORDER BY v.villager_no DESC
+    </select>
+
+    <!-- 상세: 모달 -->
+    <select id="selectVillagerByNo"
+            parameterType="int"
+            resultType="com.example.animal.dto.VillagerDetail">
+        SELECT
+            v.villager_no           AS villagerNo,
+            v.villager_category     AS villagerCategory,
+            v.villager_type         AS villagerType,
+            tc.type_name            AS villagerTypeName,
+
+            v.villager_name         AS villagerName,
+            v.villager_name_en      AS villagerNameEn,
+            v.villager_name_jp      AS villagerNameJp,
+
+            v.villager_image        AS villagerImage,
+            v.villager_image_icon   AS villagerImageIcon,
+
+            v.villager_birth        AS villagerBirth,
+            v.villager_debut        AS villagerDebut,
+            v.villager_sex          AS villagerSex,
+
+            v.villager_vote         AS villagerVote
+        FROM villager v
+        LEFT JOIN villager_type_code tc
+            ON v.villager_type = tc.villager_type
+        WHERE v.villager_no = #{villagerNo}
+    </select>
+
+</mapper>

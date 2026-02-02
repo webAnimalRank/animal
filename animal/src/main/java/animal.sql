@@ -148,7 +148,9 @@ CREATE TABLE villager (
     villager_name_en   VARCHAR(50),
     villager_name_jp   VARCHAR(50),
     villager_image     VARCHAR(255),
+    villager_image_icon VARCHAR(255),  -- 아이콘 이미지 컬럼 추가
     villager_birth     VARCHAR(5),  -- 날짜 형식 변경
+    villager_debut VARCHAR(50),  -- 데뷔 컬럼 추가
     villager_sex       TINYINT(1)  COMMENT '0:여, 1:남',
     villager_vote      INT         DEFAULT 0,
     CONSTRAINT fk_villager_type
@@ -167,6 +169,7 @@ CREATE TABLE board (
         ON UPDATE CURRENT_TIMESTAMP,
     isactive TINYINT DEFAULT 1 COMMENT '0:비활성화, 1:활성화',
     member_no INT,
+    board_kind VARCHAR(20) NOT NULL DEFAULT 'notice',
     CONSTRAINT fk_board_member
     FOREIGN KEY (member_no)
     REFERENCES member(member_no)
@@ -176,8 +179,50 @@ CREATE TABLE board (
 -- 완료 메시지 (선택 사항)
 -- =========================================
 SELECT '모든 테이블 삭제 후 새로 생성 완료!' AS result;
+
+-- ========================================================================================
+--  02-03 Board 공지/자유게시판 분기점을 위한 컬럼 추가 및 기존 데이터는 공지로 지정하기 위한 수정dml
+-- ========================================================================================
 ALTER TABLE board
 ADD COLUMN board_kind VARCHAR(20) NOT NULL DEFAULT 'notice';
 UPDATE board
 SET board_kind = 'notice'
 WHERE board_kind IS NULL OR board_kind = '';
+
+-- =========================================================
+--  02-03 Villager 테이블에 아이콘 이미지 컬럼 및 데뷔 컬럼 추가, 실제 데이터 입력          
+-- =========================================================
+ALTER TABLE villager
+ADD villager_image_icon VARCHAR(255) AFTER villager_image;
+
+ALTER TABLE villager
+ADD villager_debut VARCHAR(50) AFTER villager_birth;
+
+UPDATE villager
+SET villager_debut = '동물의 숲'
+WHERE villager_name = '럭키';
+UPDATE villager
+SET villager_debut = '동물의 숲'
+WHERE villager_name = '로빈';
+UPDATE villager
+SET villager_debut = '동물의 숲'
+WHERE villager_name = '존';
+UPDATE villager
+SET villager_debut = '동물의 숲'
+WHERE villager_name = '토미';
+
+UPDATE villager
+SET villager_image_icon = 'lucky_icon.png'
+WHERE villager_name = '럭키';
+UPDATE villager
+SET villager_image_icon = 'robin_icon.png'
+WHERE villager_name = '로빈';
+
+UPDATE villager
+SET villager_image_icon = 'john_icon.png'
+WHERE villager_name = '존';
+UPDATE villager
+SET villager_image_icon = 'tommy_icon.png'
+WHERE villager_name = '토미';
+
+select * from villager;
