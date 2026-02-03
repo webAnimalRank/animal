@@ -94,7 +94,10 @@ insert into villager (villager_category, villager_type, villager_name, villager_
 (1,1,'럭키','Lucky','ラッキー','lucky.png','11-04',1),
 (1,1,'로빈','Biskit','ロビン','robin.png','05-13',1),
 (1,1,'존','Butch','ジョン','john.png','11-01',1),
-(1,1,'토미','Bones','トミ','tommy.png','08-04',1);
+(1,1,'토미','Bones','トミ','tommy.png','08-04',1),
+(1,1,'벤','Walker','ベン','06-10',1)
+
+
 
 select * from board
 
@@ -225,4 +228,22 @@ UPDATE villager
 SET villager_image_icon = 'tommy_icon.png'
 WHERE villager_name = '토미';
 
+insert into villager (villager_category, villager_type, villager_name, villager_name_en, villager_name_jp, villager_birth, villager_sex         ) values
+(1,1,'벤','Walker','ベン','06-10',1)
+
 select * from villager;
+
+SELECT villager_no, villager_image, villager_image_icon
+FROM villager
+WHERE villager_no = 5;
+
+UPDATE villager
+SET villager_image = 'https://res.cloudinary.com/dgzaottfq/image/upload/v1770094595/animal/villager/fv6gunccayhn18d8xpn.png'
+WHERE villager_no = 5;
+
+
+UPDATE villager
+SET
+  villager_image = NULL,
+  villager_image_icon = NULL
+WHERE villager_no = 5;

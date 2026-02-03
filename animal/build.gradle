@@ -29,18 +29,21 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
 	
-	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'          /* Thymeleaf에서 레이아웃(템플릿 조각 재사용) 기능을 제공. (예: header, footer 공통화)*/
 	compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'                             /* Lombok 애노테이션(@Getter, @Setter 등) 처리.*/
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor' /* @ConfigurationProperties 사용 시 자동 완성/메타데이터 지원.*/
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	
-	annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	
+
+	implementation 'com.cloudinary:cloudinary-core:1.38.0'
+    implementation 'com.cloudinary:cloudinary-http44:1.38.0'
+
+	testImplementation 'com.h2database:h2'
+
 }
 
 tasks.named('test') {
