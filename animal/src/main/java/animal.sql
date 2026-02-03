@@ -234,9 +234,8 @@
     select * from villager;
 
     UPDATE villager
-    SET villager_image = 'https://res.cloudinary.com/dgzaottfq/image/upload/v1770094595/animal/villager/fv6gunccayhn18d8xpn.png'
+    SET villager_image = 'https://res.cloudinary.com/dgzaottfq/image/upload/v1770094595/animal/villager/riitugdggoz9fzpke7zw.png'
     WHERE villager_no = 5;
-
 
     UPDATE villager
     SET villager_image_icon = 'https://res.cloudinary.com/dgzaottfq/image/upload/v1770094595/animal/villager_icon/zjmhwd8tcb1dmooq6651.png'
