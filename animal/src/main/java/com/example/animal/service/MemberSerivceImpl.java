@@ -20,5 +20,26 @@ public class MemberSerivceImpl implements MemberService {
         return mm.allMemberList();
     }
 
+    @Override
+    public MemberDto getMemberByNo(int memberNo) {
+        return mm.selectMemberByNo(memberNo);
+    }
+
+    @Override
+    public int createMember(MemberDto memberDto) {
+        return mm.insertMember(memberDto);
+    }
+
+    @Override
+    public int updateMember(MemberDto memberDto) {
+        return mm.updateMember(memberDto);
+    }
+
+    @Override
+    public int deleteMember(int memberNo) {
+        return mm.deleteMember(memberNo);
+    }
+    
+
     
 }
