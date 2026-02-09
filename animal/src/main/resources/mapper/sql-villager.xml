@@ -43,4 +43,13 @@
         WHERE v.villager_no = #{villagerNo}
     </select>
 
+        <!-- Nookipedia 이미지 동기화: 영문명(villager_name_en) 기준으로 대표/아이콘 URL 업데이트 -->
+    <update id="updateImagesByEnglishName">
+        UPDATE villager
+        SET villager_image = #{imageUrl},
+            villager_image_icon = #{iconUrl}
+        WHERE LOWER(villager_name_en) = LOWER(#{name})
+    </update>
+
+
 </mapper>

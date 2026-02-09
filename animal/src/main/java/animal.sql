@@ -97,20 +97,12 @@
     (1,1,'토미','Bones','トミ','tommy.png','08-04',1),
     (1,1,'벤','Walker','ベン','06-10',1)
 
-
-
     select * from board
 
     select * from member;
     SHOW CREATE TABLE member;
 
     create Table test;
-
-
-
-
-
-
 
     -- =========================================
     -- 1️⃣ 기존 테이블 삭제 (존재하면 삭제)
@@ -231,12 +223,7 @@
     insert into villager (villager_category, villager_type, villager_name, villager_name_en, villager_name_jp, villager_birth, villager_sex         ) values
     (1,1,'벤','Walker','ベン','06-10',1)
 
-    select * from villager;
-
+   
     UPDATE villager
-    SET villager_image = 'https://res.cloudinary.com/dgzaottfq/image/upload/v1770094595/animal/villager/riitugdggoz9fzpke7zw.png'
-    WHERE villager_no = 5;
-
-    UPDATE villager
-    SET villager_image_icon = 'https://res.cloudinary.com/dgzaottfq/image/upload/v1770094595/animal/villager_icon/zjmhwd8tcb1dmooq6651.png'
-    WHERE villager_no = 5;
+    SET villager_image = NULL,
+        villager_image_icon = NULL;
