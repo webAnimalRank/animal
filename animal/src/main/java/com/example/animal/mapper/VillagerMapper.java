@@ -12,9 +12,19 @@ public interface VillagerMapper {
     List<VillagerList> selectVillagers();
     VillagerDetail selectVillagerByNo(int villagerNo);
 
-    int updateImagesByEnglishName(
-        @Param("name") String name,
-        @Param("imageUrl") String imageUrl,
-        @Param("iconUrl") String iconUrl
-    );
+    // 엔드포인트 1개 sync에 필요한 업서트 1방 메서드
+    int upsertFromNookipedia(
+    @Param("category") int category,
+    @Param("type") int type,
+    @Param("name") String name,
+    @Param("nameEn") String nameEn,
+    @Param("imageUrl") String imageUrl,
+    @Param("iconUrl") String iconUrl,
+    @Param("birth") String birth,
+    @Param("debut") String debut,
+    @Param("sex") Integer sex
+);
+
+    // (선택) 타입 매핑까지 VillagerMapper로 합치고 싶으면 이 메서드도 여기로
+    Integer findTypeByEnglishName(@Param("typeNameEn") String typeNameEn);
 }

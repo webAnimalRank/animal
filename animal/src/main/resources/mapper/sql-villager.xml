@@ -43,13 +43,42 @@
         WHERE v.villager_no = #{villagerNo}
     </select>
 
-        <!-- Nookipedia 이미지 동기화: 영문명(villager_name_en) 기준으로 대표/아이콘 URL 업데이트 -->
-    <update id="updateImagesByEnglishName">
-        UPDATE villager
-        SET villager_image = #{imageUrl},
-            villager_image_icon = #{iconUrl}
-        WHERE LOWER(villager_name_en) = LOWER(#{name})
-    </update>
+    <insert id="upsertFromNookipedia">
+  INSERT INTO villager (
+    villager_category,
+    villager_type,
+    villager_name,
+    villager_name_en,
+    villager_image,
+    villager_image_icon,
+    villager_birth,
+    villager_debut,
+    villager_sex
+  ) VALUES (
+    #{category},
+    #{type},
+    #{name},
+    #{nameEn},
+    #{imageUrl},
+    #{iconUrl},
+    #{birth},
+    #{debut},
+    #{sex}
+  )
+  ON DUPLICATE KEY UPDATE
+    villager_type = VALUES(villager_type),
+    villager_name = VALUES(villager_name),
+    villager_image = VALUES(villager_image),
+    villager_image_icon = VALUES(villager_image_icon),
+    villager_birth = VALUES(villager_birth),
+    villager_debut = VALUES(villager_debut),
+    villager_sex = VALUES(villager_sex);
+</insert>
 
-
+<select id="findTypeByEnglishName" resultType="int">
+    SELECT villager_type
+    FROM villager_type_code
+    WHERE type_name_en = #{typeNameEn}
+    LIMIT 1
+  </select>
 </mapper>
