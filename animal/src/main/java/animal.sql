@@ -263,5 +263,6 @@ ADD UNIQUE KEY uk_villager_name_en (villager_name_en);
 
 -- powerShell,cmd,bash:  
 --curl -X POST http://localhost:8080/api/admin/nookipedia/sync (입력하기 & 엔터)
+--위 문구는 bootrun 후에 실행 해야함.
 -- 결과가 417 나오면 417개의 데이터가 들어갔다는 의미. 즉 성공 
  
