@@ -73,5 +73,12 @@
         WHERE member_no = #{memberNo}
     </update>
 
+    <!-- 로그인 -->
+    <select id="findByMemberId" resultType="com.example.animal.dto.MemberDto">
+    SELECT *
+    FROM member
+    WHERE member_id = #{memberId}
+    </select>
+
 
 </mapper>

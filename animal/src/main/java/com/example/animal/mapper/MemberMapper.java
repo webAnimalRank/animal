@@ -3,6 +3,7 @@ package com.example.animal.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.animal.dto.MemberDto;
 
@@ -21,4 +22,7 @@ public interface MemberMapper {
 
     // 회원 삭제 (논리 삭제)
     int deleteMember(int memberNo);
+
+    // 로그인 회원 조회
+    MemberDto findByMemberId(String memberId);
 }
