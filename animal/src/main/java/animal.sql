@@ -259,7 +259,7 @@ ADD UNIQUE KEY uk_villager_name_en (villager_name_en);
 -- 3. villager_type_code 테이블에 type_name_en 컬럼 추가하기 (
 -- ALTER TABLE villager_type_codeADD type_name_en VARCHAR(20) NOT NULL AFTER type_name; )
 -- 4. villager_type_code 테이블에 영문 타입명 업데이트 하기 (209줄 부터 249줄 까지 한줄 한줄 , 순서 중요)
--- 5. villager 테이블에 villager_name_en 컬럼에 유니크 제약조건 추가하기 (  ALTER TABLE villagerADD UNIQUE KEY uk_villager_name_en (villager_name_en);  )
+-- 5. villager 테이블에 villager_name_en 컬럼에 유니크 제약조건 추가하기 (  251번줄 : ALTER TABLE villagerADD UNIQUE KEY uk_villager_name_en (villager_name_en);  )
 
 -- powerShell,cmd,bash:  
 --curl -X POST http://localhost:8080/api/admin/nookipedia/sync (입력하기 & 엔터)
