@@ -71,12 +71,14 @@ public class MemberController {
     public ResponseEntity<LoginResponseDto> login(
             @RequestBody LoginRequestDto dto) {
 
-        System.out.println("로그인 DTO 들어옴: " + dto.getMemberId() + " / " + dto.getMemberPw());
+    try {  
         String token = memberService.login(dto);
-        System.out.println("🔥🔥🔥🔥🔥🔥🔥로그인 시도: " + dto); // <- 터미널 로그 확인용
-
+        System.out.println("🔥🔥🔥🔥🔥🔥🔥로그인 성공, 토큰: " + token);
         return ResponseEntity.ok(new LoginResponseDto(token));
+    } catch (Exception e) {
+        System.out.println("🔥🔥🔥🔥🔥🔥로그인 실패: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-    
+    }
     
 }
