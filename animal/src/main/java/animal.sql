@@ -251,7 +251,7 @@ ON DUPLICATE KEY UPDATE type_name=VALUES(type_name), type_name_en=VALUES(type_na
 ALTER TABLE villager
 ADD UNIQUE KEY uk_villager_name_en (villager_name_en);
 
--- 데이터 넣는 방법
+-- 주민 데이터 넣는 방법
 
 -- sql부터 정리 하기
 -- 1. select * from villager로 데이터 있는지 확인
