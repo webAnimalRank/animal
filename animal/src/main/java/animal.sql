@@ -89,21 +89,6 @@ insert into villager_type_code (villager_type, type_name) values
 (33,'햄스터'),
 (34,'호랑이');
 
---  VILLAGER
-insert into villager (villager_category, villager_type, villager_name, villager_name_en, villager_name_jp, villager_image, villager_birth, villager_sex) values
-(1,1,'럭키','Lucky','ラッキー','lucky.png','11-04',1),
-(1,1,'로빈','Biskit','ロビン','robin.png','05-13',1),
-(1,1,'존','Butch','ジョン','john.png','11-01',1),
-(1,1,'토미','Bones','トミ','tommy.png','08-04',1),
-(1,1,'벤','Walker','ベン','06-10',1)
-
-select * from board
-
-select * from member;
-SHOW CREATE TABLE member;
-
-create Table test;
-
 -- =========================================
 -- 1️⃣ 기존 테이블 삭제 (존재하면 삭제)
 -- =========================================
@@ -722,3 +707,7 @@ UPDATE villager
 SET villager_name = '소면',
     villager_name_jp = 'ビーフン'
 WHERE villager_name_en = 'Zoe';
+
+select * from villager
+
+주민 타입(종족), 성별, 성격(Personality), 생일(월) / 생일 범위, 일반 및 특수 주민

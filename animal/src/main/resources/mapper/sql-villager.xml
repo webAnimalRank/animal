@@ -81,4 +81,29 @@
     WHERE type_name_en = #{typeNameEn}
     LIMIT 1
   </select>
+
+    <!-- 검색 기능: 타입(종족), 성별, 생일(월) -->
+  <select id="searchVillagers" resultType="com.example.animal.dto.VillagerList">
+    SELECT
+        v.villager_no         AS villagerNo,
+        v.villager_name       AS villagerName,
+        v.villager_image_icon AS villagerImageIcon
+    FROM villager v
+    <where>
+        <if test="type != null">
+            AND v.villager_type = #{type}
+        </if>
+
+        <if test="sex != null">
+            AND v.villager_sex = #{sex}
+        </if>
+
+        <if test="birthMonth != null and birthMonth != ''">
+            AND LEFT(v.villager_birth, 2) = #{birthMonth}
+            <!-- MySQL이면 SUBSTRING(v.villager_birth, 1, 2) 도 OK -->
+        </if>
+    </where>
+    ORDER BY v.villager_no ASC
+</select>
+
 </mapper>

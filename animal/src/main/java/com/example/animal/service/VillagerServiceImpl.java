@@ -23,4 +23,14 @@ public class VillagerServiceImpl implements VillagerService {
     public VillagerDetail getVillager(int villagerNo) {
         return villagerMapper.selectVillagerByNo(villagerNo);
     }
+
+     public List<VillagerList> searchVillagers(Integer type, Integer sex, String birthMonth) {
+        // birthMonth: "2" 같은 값이 오면 "02"로 보정 (안전장치)
+        if (birthMonth != null && !birthMonth.isBlank()) {
+            String trimmed = birthMonth.trim();
+            if (trimmed.length() == 1) birthMonth = "0" + trimmed;
+            else birthMonth = trimmed;
+        }
+        return villagerMapper.searchVillagers(type, sex, birthMonth);
+    }
 }

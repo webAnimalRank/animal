@@ -25,4 +25,14 @@ public class VillagerController {
     public VillagerDetail getVillager(@PathVariable int villagerNo) {
         return villagerService.getVillager(villagerNo);
     }
+
+    // 검색 기능을 위한 엔드포인트 추가
+     @GetMapping("/search")
+    public List<VillagerList> searchVillagers(
+        @RequestParam(required = false) Integer type,
+        @RequestParam(required = false) Integer sex,
+        @RequestParam(required = false) String birthMonth
+    ) {
+        return villagerService.searchVillagers(type, sex, birthMonth);
+    }
 }
