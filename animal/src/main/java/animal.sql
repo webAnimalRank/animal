@@ -708,6 +708,27 @@ SET villager_name = '소면',
     villager_name_jp = 'ビーフン'
 WHERE villager_name_en = 'Zoe';
 
-select * from villager
+-- 5. 전체 이미지가 없는 주민 insert문
+UPDATE villager
+SET villager_image = 'https://dodo.ac/np/images/e/e1/Marty_NH_Model.png'
+WHERE villager_no = 242;
 
-주민 타입(종족), 성별, 성격(Personality), 생일(월) / 생일 범위, 일반 및 특수 주민
+update villager
+set villager_image = 'https://dodo.ac/np/images/d/d9/Étoile_NH_Model.png'
+where villager_no = 138;
+
+UPDATE villager
+SET villager_image = 'https://dodo.ac/np/images/c/c1/Chelsea_NH_Model.png'
+WHERE villager_no = 84;
+
+UPDATE villager
+SET villager_image = 'https://dodo.ac/np/images/8/84/Chai_NH_Model.png'
+WHERE villager_no = 82;
+
+UPDATE villager
+SET villager_image = 'https://dodo.ac/np/images/2/25/Rilla_NH_Model.png'
+WHERE villager_no = 322
+
+UPDATE villager
+SET villager_image = 'https://dodo.ac/np/images/5/59/Toby_NH_Model.png'
+WHERE villager_no = 387;
