@@ -2,7 +2,6 @@ package com.example.animal.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,17 +14,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.animal.dto.LoginRequestDto;
-import com.example.animal.dto.LoginResponseDto;
 import com.example.animal.dto.MemberDto;
 import com.example.animal.service.MemberService;
+
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(
+    origins = "http://localhost:5173",
+    allowCredentials = "true"
+)
 public class MemberController {
     // @Autowired
     // private MemberService ms;
@@ -68,17 +70,38 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(
-            @RequestBody LoginRequestDto dto) {
+    public ResponseEntity<?> login(
+        @RequestBody MemberDto dto,
+        HttpSession session) {
 
-    try {  
-        String token = memberService.login(dto);
-        System.out.println("🔥🔥🔥🔥🔥🔥🔥로그인 성공, 토큰: " + token);
-        return ResponseEntity.ok(new LoginResponseDto(token));
+    try {
+        MemberDto member = memberService.login(dto);
+
+        session.setAttribute("loginMember", member);
+
+        return ResponseEntity.ok().build();
+
     } catch (Exception e) {
-        System.out.println("🔥🔥🔥🔥🔥🔥로그인 실패: " + e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
     }
+
+    // mypage api
+    @GetMapping("/me")
+    public ResponseEntity<MemberDto> myPage(HttpSession session) {
+        MemberDto member = (MemberDto) session.getAttribute("loginMember");
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok(member);
+    }
+
+    // logout api
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+    session.invalidate(); // 세션 삭제
+    return ResponseEntity.ok().build();
+}
     
 }
