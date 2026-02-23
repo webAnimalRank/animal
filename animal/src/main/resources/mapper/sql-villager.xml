@@ -80,7 +80,7 @@
     FROM villager_type_code
     WHERE type_name_en = #{typeNameEn}
     LIMIT 1
-  </select>
+</select>
 
     <!-- 검색 기능: 타입(종족), 성별, 생일(월) -->
   <select id="searchVillagers" resultType="com.example.animal.dto.VillagerList">
