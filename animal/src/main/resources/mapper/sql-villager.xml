@@ -9,7 +9,8 @@
         SELECT
             v.villager_no           AS villagerNo,
             v.villager_name         AS villagerName,
-            v.villager_image_icon   AS villagerImageIcon
+            v.villager_image_icon   AS villagerImageIcon,
+            v.villager_birth        AS villagerBirth
         FROM villager v
         ORDER BY v.villager_no DESC
     </select>
@@ -92,7 +93,8 @@
         SELECT
             v.villager_no         AS villagerNo,
             v.villager_name       AS villagerName,
-            v.villager_image_icon AS villagerImageIcon
+            v.villager_image_icon AS villagerImageIcon,
+            v.villager_birth      AS villagerBirth
         FROM villager v
         <where>
             <if test="type != null">
