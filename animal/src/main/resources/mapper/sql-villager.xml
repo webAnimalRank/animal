@@ -5,7 +5,6 @@
 
 <mapper namespace="com.example.animal.mapper.VillagerMapper">
 
-    <!-- 목록: 리스트(아이콘+이름) -->
     <select id="selectVillagers" resultType="com.example.animal.dto.VillagerList">
         SELECT
             v.villager_no           AS villagerNo,
@@ -15,7 +14,6 @@
         ORDER BY v.villager_no DESC
     </select>
 
-    <!-- 상세: 모달 -->
     <select id="selectVillagerByNo"
             parameterType="int"
             resultType="com.example.animal.dto.VillagerDetail">
@@ -44,66 +42,72 @@
     </select>
 
     <insert id="upsertFromNookipedia">
-  INSERT INTO villager (
-    villager_category,
-    villager_type,
-    villager_name,
-    villager_name_en,
-    villager_image,
-    villager_image_icon,
-    villager_birth,
-    villager_debut,
-    villager_sex
-  ) VALUES (
-    #{category},
-    #{type},
-    #{name},
-    #{nameEn},
-    #{imageUrl},
-    #{iconUrl},
-    #{birth},
-    #{debut},
-    #{sex}
-  )
-  ON DUPLICATE KEY UPDATE
-    villager_type = VALUES(villager_type),
-    villager_name = VALUES(villager_name),
-    villager_image = VALUES(villager_image),
-    villager_image_icon = VALUES(villager_image_icon),
-    villager_birth = VALUES(villager_birth),
-    villager_debut = VALUES(villager_debut),
-    villager_sex = VALUES(villager_sex);
-</insert>
+        INSERT INTO villager (
+            villager_category,
+            villager_type,
+            villager_name,
+            villager_name_en,
+            villager_image,
+            villager_image_icon,
+            villager_birth,
+            villager_debut,
+            villager_sex
+        ) VALUES (
+            #{category},
+            #{type},
+            #{name},
+            #{nameEn},
+            #{imageUrl},
+            #{iconUrl},
+            #{birth},
+            #{debut},
+            #{sex}
+        )
+        ON DUPLICATE KEY UPDATE
+            villager_type = VALUES(villager_type),
+            villager_name = VALUES(villager_name),
+            villager_image = VALUES(villager_image),
+            villager_image_icon = VALUES(villager_image_icon),
+            villager_birth = VALUES(villager_birth),
+            villager_debut = VALUES(villager_debut),
+            villager_sex = VALUES(villager_sex);
+    </insert>
 
-<select id="findTypeByEnglishName" resultType="int">
-    SELECT villager_type
-    FROM villager_type_code
-    WHERE type_name_en = #{typeNameEn}
-    LIMIT 1
-</select>
+    <select id="findTypeByEnglishName" resultType="int">
+        SELECT villager_type
+        FROM villager_type_code
+        WHERE type_name_en = #{typeNameEn}
+        LIMIT 1
+    </select>
 
-    <!-- 검색 기능: 타입(종족), 성별, 생일(월) -->
-  <select id="searchVillagers" resultType="com.example.animal.dto.VillagerList">
-    SELECT
-        v.villager_no         AS villagerNo,
-        v.villager_name       AS villagerName,
-        v.villager_image_icon AS villagerImageIcon
-    FROM villager v
-    <where>
-        <if test="type != null">
-            AND v.villager_type = #{type}
-        </if>
+    <select id="searchVillagers" resultType="com.example.animal.dto.VillagerList">
+        SELECT
+            v.villager_no         AS villagerNo,
+            v.villager_name       AS villagerName,
+            v.villager_image_icon AS villagerImageIcon
+        FROM villager v
+        <where>
+            <if test="type != null">
+                AND v.villager_type = #{type}
+            </if>
 
-        <if test="sex != null">
-            AND v.villager_sex = #{sex}
-        </if>
+            <if test="sex != null">
+                AND v.villager_sex = #{sex}
+            </if>
 
-        <if test="birthMonth != null and birthMonth != ''">
-            AND LEFT(v.villager_birth, 2) = #{birthMonth}
-            <!-- MySQL이면 SUBSTRING(v.villager_birth, 1, 2) 도 OK -->
-        </if>
-    </where>
-    ORDER BY v.villager_name COLLATE utf8mb4_unicode_ci ASC
-</select>
+            <if test="birthMonth != null and birthMonth != ''">
+                AND LEFT(v.villager_birth, 2) = #{birthMonth}
+            </if>
+
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    v.villager_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR v.villager_name_en LIKE CONCAT('%', #{keyword}, '%')
+                    OR v.villager_name_jp LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY v.villager_name COLLATE utf8mb4_unicode_ci ASC
+    </select>
 
 </mapper>

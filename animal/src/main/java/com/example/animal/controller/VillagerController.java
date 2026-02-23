@@ -31,8 +31,9 @@ public class VillagerController {
     public List<VillagerList> searchVillagers(
         @RequestParam(required = false) Integer type,
         @RequestParam(required = false) Integer sex,
-        @RequestParam(required = false) String birthMonth
+        @RequestParam(required = false) String birthMonth,
+        @RequestParam(required = false) String keyword
     ) {
-        return villagerService.searchVillagers(type, sex, birthMonth);
+        return villagerService.searchVillagers(type, sex, birthMonth, keyword);
     }
 }

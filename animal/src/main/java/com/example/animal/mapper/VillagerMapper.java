@@ -32,6 +32,7 @@ public interface VillagerMapper {
     List<VillagerList> searchVillagers(
         @Param("type") Integer type,
         @Param("sex") Integer sex,
-        @Param("birthMonth") String birthMonth
+        @Param("birthMonth") String birthMonth,
+        @Param("keyword") String keyword
     );
 }
