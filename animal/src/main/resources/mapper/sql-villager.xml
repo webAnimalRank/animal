@@ -103,7 +103,7 @@
             <!-- MySQL이면 SUBSTRING(v.villager_birth, 1, 2) 도 OK -->
         </if>
     </where>
-    ORDER BY v.villager_no ASC
+    ORDER BY v.villager_name COLLATE utf8mb4_unicode_ci ASC
 </select>
 
 </mapper>
