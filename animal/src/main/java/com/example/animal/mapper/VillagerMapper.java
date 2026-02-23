@@ -3,6 +3,7 @@ package com.example.animal.mapper;
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
 import com.example.animal.dto.VillagerTypeOption;
+import com.example.animal.dto.VoteTopItem;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -38,4 +39,21 @@ public interface VillagerMapper {
         @Param("debut") String debut,
         @Param("keyword") String keyword
     );
+
+    int countMonthlyVotesByMember(
+            @Param("memberId") String memberId,
+            @Param("voteMonth") String voteMonth
+    );
+
+    int countExistingVillagers(@Param("villagerNos") List<Integer> villagerNos);
+
+    int insertVoteHistories(
+            @Param("memberId") String memberId,
+            @Param("voteMonth") String voteMonth,
+            @Param("villagerNos") List<Integer> villagerNos
+    );
+
+    int increaseVillagerVotes(@Param("villagerNos") List<Integer> villagerNos);
+
+    List<VoteTopItem> selectMonthlyTop3(@Param("voteMonth") String voteMonth);
 }

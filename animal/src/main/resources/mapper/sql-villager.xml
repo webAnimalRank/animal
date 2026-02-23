@@ -127,4 +127,61 @@
         ORDER BY v.villager_name COLLATE utf8mb4_unicode_ci ASC
     </select>
 
+    <select id="countMonthlyVotesByMember" resultType="int">
+        SELECT COUNT(*)
+        FROM villager_vote_history
+        WHERE member_id = #{memberId}
+          AND vote_month = #{voteMonth}
+    </select>
+
+    <select id="countExistingVillagers" resultType="int">
+        SELECT COUNT(*)
+        FROM villager
+        WHERE villager_no IN
+        <foreach collection="villagerNos" item="villagerNo" open="(" separator="," close=")">
+            #{villagerNo}
+        </foreach>
+    </select>
+
+    <insert id="insertVoteHistories">
+        INSERT INTO villager_vote_history (
+            member_id,
+            villager_no,
+            vote_month
+        ) VALUES
+        <foreach collection="villagerNos" item="villagerNo" separator=",">
+            (#{memberId}, #{villagerNo}, #{voteMonth})
+        </foreach>
+    </insert>
+
+    <update id="increaseVillagerVotes">
+        UPDATE villager
+        SET villager_vote = villager_vote + 1
+        WHERE villager_no IN
+        <foreach collection="villagerNos" item="villagerNo" open="(" separator="," close=")">
+            #{villagerNo}
+        </foreach>
+    </update>
+
+    <select id="selectMonthlyTop3" resultType="com.example.animal.dto.VoteTopItem">
+        SELECT
+            s.villager_no AS villagerNo,
+            v.villager_name AS villagerName,
+            v.villager_image AS villagerImage,
+            v.villager_image_icon AS villagerImageIcon,
+            s.votes AS votes
+        FROM (
+            SELECT
+                villager_no,
+                COUNT(*) AS votes
+            FROM villager_vote_history
+            WHERE vote_month = #{voteMonth}
+            GROUP BY villager_no
+            ORDER BY votes DESC, villager_no ASC
+            LIMIT 3
+        ) s
+        JOIN villager v ON v.villager_no = s.villager_no
+        ORDER BY s.votes DESC, s.villager_no ASC
+    </select>
+
 </mapper>

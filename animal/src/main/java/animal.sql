@@ -734,3 +734,18 @@ SET villager_image = 'https://dodo.ac/np/images/5/59/Toby_NH_Model.png'
 WHERE villager_no = 387;
 
 select * from villager;
+
+-- =========================================================
+--  02-23 월별 인기투표 이력 테이블 (회원당 월 3표 제한용)
+-- =========================================================
+CREATE TABLE IF NOT EXISTS villager_vote_history (
+    vote_no      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    member_id    VARCHAR(50) NOT NULL,
+    villager_no  INT NOT NULL,
+    vote_month   CHAR(7) NOT NULL COMMENT 'YYYY-MM',
+    vote_date    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_vote_member_month (member_id, vote_month),
+    INDEX idx_vote_month_villager (vote_month, villager_no),
+    CONSTRAINT fk_vote_history_villager
+        FOREIGN KEY (villager_no) REFERENCES villager(villager_no)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
