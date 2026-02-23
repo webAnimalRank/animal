@@ -1,83 +1,74 @@
 package com.example.animal.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.example.animal.dto.Board;
+import com.example.animal.dto.BoardMutationResponse;
+import com.example.animal.dto.BoardPageResponse;
+import com.example.animal.service.BoardService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.animal.dto.Board;
-import com.example.animal.service.BoardService;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boards")
-@CrossOrigin(origins = "http://localhost:5173") // 개발용
+@CrossOrigin(origins = "http://localhost:5173")
 public class BoardController {
+
+    private static final String DEFAULT_KIND = "notice";
+    private static final String DEFAULT_SEARCH = "titleContent";
+    private static final String DEFAULT_KEYWORD = "";
+    private static final int DEFAULT_PAGE = 1;
+    private static final int MAX_PAGE_SIZE = 50;
 
     private final BoardService boardService;
 
-    // 목록 + 검색 + 페이징
-    // GET /api/boards?search=title|content|titleContent|writer&keyword=...&page=1&size=10
     @GetMapping
-    public Map<String, Object> list(
-            @RequestParam(defaultValue = "notice") String kind,
-            @RequestParam(defaultValue = "titleContent") String search,
-            @RequestParam(defaultValue = "") String keyword,
+    public BoardPageResponse list(
+            @RequestParam(defaultValue = DEFAULT_KIND) String kind,
+            @RequestParam(defaultValue = DEFAULT_SEARCH) String search,
+            @RequestParam(defaultValue = DEFAULT_KEYWORD) String keyword,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        List<Board> items = boardService.getBoards(kind, search, keyword, page, size);
-        long totalItems = boardService.getTotalBoards(kind, search, keyword);
+        int safePage = normalizePage(page);
+        int safeSize = normalizeSize(size);
 
-        int safeSize = Math.min(Math.max(size, 1), 50);
+        List<Board> items = boardService.getBoards(kind, search, keyword, safePage, safeSize);
+        long totalItems = boardService.getTotalBoards(kind, search, keyword);
         int totalPages = (int) Math.ceil((double) totalItems / safeSize);
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("items", items);
-        res.put("page", Math.max(page, 1));
-        res.put("size", safeSize);
-        res.put("totalItems", totalItems);
-        res.put("totalPages", totalPages);
-        return res;
+        return new BoardPageResponse(items, safePage, safeSize, totalItems, totalPages);
     }
 
-    // 상세
     @GetMapping("/{boardNo}")
     public Board detail(@PathVariable int boardNo) {
         return boardService.getBoardDetail(boardNo);
     }
 
-    // 등록
     @PostMapping
-    public Map<String, Object> create(@RequestBody Board board) {
+    public BoardMutationResponse create(@RequestBody Board board) {
         int result = boardService.createBoard(board);
-
-        Map<String, Object> res = new HashMap<>();
-        res.put("result", result);           // 1이면 성공
-        res.put("boardNo", board.getBoardNo()); // 생성된 PK
-        return res;
+        return new BoardMutationResponse(result, board.getBoardNo());
     }
 
-    // 수정
     @PutMapping("/{boardNo}")
-    public Map<String, Object> update(@PathVariable int boardNo, @RequestBody Board board) {
+    public BoardMutationResponse update(@PathVariable int boardNo, @RequestBody Board board) {
         boolean ok = boardService.updateBoard(boardNo, board);
-
-        Map<String, Object> res = new HashMap<>();
-        res.put("result", ok ? 1 : 0);
-        return res;
+        return new BoardMutationResponse(ok ? 1 : 0, null);
     }
 
-    // 삭제(소프트)
     @DeleteMapping("/{boardNo}")
-    public Map<String, Object> delete(@PathVariable int boardNo) {
+    public BoardMutationResponse delete(@PathVariable int boardNo) {
         boolean ok = boardService.deleteBoard(boardNo);
+        return new BoardMutationResponse(ok ? 1 : 0, null);
+    }
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("result", ok ? 1 : 0);
-        return res;
+    private int normalizePage(int page) {
+        return Math.max(page, DEFAULT_PAGE);
+    }
+
+    private int normalizeSize(int size) {
+        return Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
     }
 }

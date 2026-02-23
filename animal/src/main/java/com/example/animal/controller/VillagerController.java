@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,26 +56,18 @@ public class VillagerController {
             @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody VoteSubmitRequest request
     ) {
-        String memberId = extractMemberIdFromBearerToken(authorization);
-        try {
-            return villagerService.submitVotes(memberId, request.getVillagerNos());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
-        }
+        String memberId = resolveMemberId(authorization);
+        return handleBadRequestAndConflict(
+                () -> villagerService.submitVotes(memberId, request.getVillagerNos())
+        );
     }
 
     @GetMapping("/votes/me")
     public VoteStatusResponse getMyVoteStatus(
             @RequestHeader(value = "Authorization", required = false) String authorization
     ) {
-        String memberId = extractMemberIdFromBearerToken(authorization);
-        try {
-            return villagerService.getMyVoteStatus(memberId);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+        String memberId = resolveMemberId(authorization);
+        return handleBadRequest(() -> villagerService.getMyVoteStatus(memberId));
     }
 
     @GetMapping("/votes/top")
@@ -82,14 +75,36 @@ public class VillagerController {
         return villagerService.getMonthlyTop3();
     }
 
-    private String extractMemberIdFromBearerToken(String authorization) {
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing bearer token.");
-        }
-        String token = authorization.substring(7);
+    private String resolveMemberId(String authorization) {
+        String token = extractBearerToken(authorization);
         if (!jwtUtil.isValidToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token.");
         }
         return jwtUtil.extractMemberId(token);
+    }
+
+    private String extractBearerToken(String authorization) {
+        if (authorization == null || authorization.isBlank() || !authorization.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing bearer token.");
+        }
+        return authorization.substring(7);
+    }
+
+    private <T> T handleBadRequest(Supplier<T> action) {
+        try {
+            return action.get();
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        }
+    }
+
+    private <T> T handleBadRequestAndConflict(Supplier<T> action) {
+        try {
+            return action.get();
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
+        }
     }
 }
