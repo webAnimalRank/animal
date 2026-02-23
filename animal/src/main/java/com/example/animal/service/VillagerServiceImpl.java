@@ -2,6 +2,7 @@ package com.example.animal.service;
 
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
+import com.example.animal.dto.VillagerTypeOption;
 import com.example.animal.mapper.VillagerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,11 @@ public class VillagerServiceImpl implements VillagerService {
     @Override
     public List<VillagerList> getVillagers() {
         return villagerMapper.selectVillagers();
+    }
+
+    @Override
+    public List<VillagerTypeOption> getVillagerTypes() {
+        return villagerMapper.selectVillagerTypes();
     }
 
     @Override

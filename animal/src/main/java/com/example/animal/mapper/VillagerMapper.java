@@ -2,6 +2,7 @@ package com.example.animal.mapper;
 
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
+import com.example.animal.dto.VillagerTypeOption;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Mapper
 public interface VillagerMapper {
     List<VillagerList> selectVillagers();
+    List<VillagerTypeOption> selectVillagerTypes();
     VillagerDetail selectVillagerByNo(int villagerNo);
 
     // 엔드포인트 1개 sync에 필요한 업서트 1방 메서드

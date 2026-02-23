@@ -2,6 +2,7 @@ package com.example.animal.controller;
 
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
+import com.example.animal.dto.VillagerTypeOption;
 import com.example.animal.service.VillagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,11 @@ public class VillagerController {
     @GetMapping
     public List<VillagerList> getVillagers() {
         return villagerService.getVillagers();
+    }
+
+    @GetMapping("/types")
+    public List<VillagerTypeOption> getVillagerTypes() {
+        return villagerService.getVillagerTypes();
     }
 
     @GetMapping("/{villagerNo}")
