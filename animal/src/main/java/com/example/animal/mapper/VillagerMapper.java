@@ -35,6 +35,7 @@ public interface VillagerMapper {
         @Param("type") Integer type,
         @Param("sex") Integer sex,
         @Param("birthMonth") String birthMonth,
+        @Param("debut") String debut,
         @Param("keyword") String keyword
     );
 }

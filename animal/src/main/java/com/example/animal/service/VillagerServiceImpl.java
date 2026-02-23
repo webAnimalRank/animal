@@ -31,7 +31,7 @@ public class VillagerServiceImpl implements VillagerService {
     }
 
     @Override
-    public List<VillagerList> searchVillagers(Integer type, Integer sex, String birthMonth, String keyword) {
+    public List<VillagerList> searchVillagers(Integer type, Integer sex, String birthMonth, String debut, String keyword) {
         // birthMonth: "2" 같은 값이 오면 "02"로 보정 (안전장치)
         if (birthMonth != null && !birthMonth.isBlank()) {
             String trimmed = birthMonth.trim();
@@ -42,6 +42,10 @@ public class VillagerServiceImpl implements VillagerService {
             keyword = keyword.trim();
             if (keyword.isEmpty()) keyword = null;
         }
-        return villagerMapper.searchVillagers(type, sex, birthMonth, keyword);
+        if (debut != null) {
+            debut = debut.trim();
+            if (debut.isEmpty()) debut = null;
+        }
+        return villagerMapper.searchVillagers(type, sex, birthMonth, debut, keyword);
     }
 }

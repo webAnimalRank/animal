@@ -732,3 +732,5 @@ WHERE villager_no = 322
 UPDATE villager
 SET villager_image = 'https://dodo.ac/np/images/5/59/Toby_NH_Model.png'
 WHERE villager_no = 387;
+
+select * from villager;

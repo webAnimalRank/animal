@@ -12,5 +12,5 @@ public interface VillagerService {
     VillagerDetail getVillager(int villagerNo);
 
     // 검색 기능을 위한 메서드 추가
-    List<VillagerList> searchVillagers(Integer type, Integer sex, String birthMonth, String keyword);
+    List<VillagerList> searchVillagers(Integer type, Integer sex, String birthMonth, String debut, String keyword);
 }

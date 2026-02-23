@@ -109,6 +109,13 @@
                 AND LEFT(v.villager_birth, 2) = #{birthMonth}
             </if>
 
+            <if test="debut != null and debut != ''">
+                AND FIND_IN_SET(
+                    REPLACE(UPPER(#{debut}), ' ', ''),
+                    REPLACE(REPLACE(UPPER(v.villager_debut), '/', ','), ' ', '')
+                ) > 0
+            </if>
+
             <if test="keyword != null and keyword != ''">
                 AND (
                     v.villager_name LIKE CONCAT('%', #{keyword}, '%')
