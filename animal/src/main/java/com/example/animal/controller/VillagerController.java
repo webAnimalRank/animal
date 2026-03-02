@@ -1,5 +1,6 @@
 package com.example.animal.controller;
 
+import com.example.animal.dto.MemberDto;
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
 import com.example.animal.dto.VillagerTypeOption;
@@ -7,7 +8,7 @@ import com.example.animal.dto.VoteStatusResponse;
 import com.example.animal.dto.VoteSubmitRequest;
 import com.example.animal.dto.VoteTopResponse;
 import com.example.animal.service.VillagerService;
-import com.example.animal.util.JwtUtil;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +20,13 @@ import java.util.function.Supplier;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/villagers")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(
+        origins = "http://localhost:5173",
+        allowCredentials = "true"
+)
 public class VillagerController {
 
     private final VillagerService villagerService;
-    private final JwtUtil jwtUtil;
 
     @GetMapping
     public List<VillagerList> getVillagers() {
@@ -53,10 +56,10 @@ public class VillagerController {
 
     @PostMapping("/votes")
     public VoteStatusResponse submitVotes(
-            @RequestHeader(value = "Authorization", required = false) String authorization,
+            HttpSession session,
             @RequestBody VoteSubmitRequest request
     ) {
-        String memberId = resolveMemberId(authorization);
+        String memberId = resolveMemberId(session);
         return handleBadRequestAndConflict(
                 () -> villagerService.submitVotes(memberId, request.getVillagerNos())
         );
@@ -64,9 +67,9 @@ public class VillagerController {
 
     @GetMapping("/votes/me")
     public VoteStatusResponse getMyVoteStatus(
-            @RequestHeader(value = "Authorization", required = false) String authorization
+            HttpSession session
     ) {
-        String memberId = resolveMemberId(authorization);
+        String memberId = resolveMemberId(session);
         return handleBadRequest(() -> villagerService.getMyVoteStatus(memberId));
     }
 
@@ -75,19 +78,12 @@ public class VillagerController {
         return villagerService.getMonthlyTop3();
     }
 
-    private String resolveMemberId(String authorization) {
-        String token = extractBearerToken(authorization);
-        if (!jwtUtil.isValidToken(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token.");
+    private String resolveMemberId(HttpSession session) {
+        MemberDto member = (MemberDto) session.getAttribute("loginMember");
+        if (member == null || member.getMemberId() == null || member.getMemberId().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login required.");
         }
-        return jwtUtil.extractMemberId(token);
-    }
-
-    private String extractBearerToken(String authorization) {
-        if (authorization == null || authorization.isBlank() || !authorization.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing bearer token.");
-        }
-        return authorization.substring(7);
+        return member.getMemberId();
     }
 
     private <T> T handleBadRequest(Supplier<T> action) {
