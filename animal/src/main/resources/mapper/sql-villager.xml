@@ -9,6 +9,7 @@
         SELECT
             v.villager_no           AS villagerNo,
             v.villager_name         AS villagerName,
+            v.villager_image        AS villagerImage,
             v.villager_image_icon   AS villagerImageIcon,
             v.villager_birth        AS villagerBirth
         FROM villager v
@@ -93,6 +94,7 @@
         SELECT
             v.villager_no         AS villagerNo,
             v.villager_name       AS villagerName,
+            v.villager_image      AS villagerImage,
             v.villager_image_icon AS villagerImageIcon,
             v.villager_birth      AS villagerBirth
         FROM villager v
