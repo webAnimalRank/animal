@@ -184,4 +184,17 @@
         ORDER BY s.votes DESC, s.villager_no ASC
     </select>
 
+    <!-- mypage mypick -->
+    <select id="selectMyVotedVillagers" resultType="com.example.animal.dto.VillagerList">
+        SELECT v.villager_no AS villagerNo,
+            v.villager_name AS villagerName,
+            v.villager_image_icon AS villagerImageIcon,
+            v.villager_birth AS villagerBirth
+        FROM vote_history vh
+        JOIN villager v ON vh.villager_no = v.villager_no
+        WHERE vh.member_id = #{memberId}
+        AND vh.vote_month = #{voteMonth}
+        ORDER BY vh.vote_date DESC
+    </select>
+
 </mapper>

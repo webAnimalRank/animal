@@ -25,4 +25,6 @@ public interface MemberMapper {
 
     // 로그인 회원 조회
     MemberDto findByMemberId(String memberId);
+
+    
 }

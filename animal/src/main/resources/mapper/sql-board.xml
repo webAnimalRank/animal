@@ -81,6 +81,15 @@
     AND b.isactive = 1
     </select>
 
+    <!-- mypost 보기 -->
+    <select id="selectBoardsByMember" resultType="com.example.animal.dto.Board">
+    SELECT *
+    FROM board
+    WHERE member_no = #{memberNo}
+      AND isactive = 1
+    ORDER BY board_no DESC
+    </select>
+
     <!-- 등록 -->
     <insert id="insertBoard" parameterType="com.example.animal.dto.Board" useGeneratedKeys="true" keyProperty="boardNo">
         INSERT INTO board

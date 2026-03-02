@@ -3,7 +3,10 @@ package com.example.animal.controller;
 import com.example.animal.dto.Board;
 import com.example.animal.dto.BoardMutationResponse;
 import com.example.animal.dto.BoardPageResponse;
+import com.example.animal.dto.MemberDto;
 import com.example.animal.service.BoardService;
+
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +15,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/boards")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(
+    origins = "http://localhost:5173",
+    allowCredentials = "true"
+)
 public class BoardController {
 
     private static final String DEFAULT_KIND = "notice";
@@ -71,4 +77,17 @@ public class BoardController {
     private int normalizeSize(int size) {
         return Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
     }
+
+    // mypage mypost api
+    @GetMapping("/my")
+    public List<Board> myBoards(HttpSession session) {
+
+    MemberDto member = (MemberDto) session.getAttribute("loginMember");
+
+    if (member == null) {
+        throw new RuntimeException("로그인 필요");
+    }
+
+    return boardService.getBoardsByMember(member.getMemberNo());
+}
 }

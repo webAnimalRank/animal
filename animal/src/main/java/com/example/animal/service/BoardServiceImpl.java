@@ -109,4 +109,10 @@ public class BoardServiceImpl implements BoardService {
 
         board.setBoardKind(normalizeKind(board.getBoardKind()));
     }
+
+    // mypost
+    @Override
+    public List<Board> getBoardsByMember(int memberNo) {
+        return boardMapper.selectBoardsByMember(memberNo);
+    }
 }

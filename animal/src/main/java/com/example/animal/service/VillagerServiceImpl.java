@@ -128,4 +128,13 @@ public class VillagerServiceImpl implements VillagerService {
     private String currentVoteMonth() {
         return YearMonth.now().toString();
     }
+
+    @Override
+    public List<VillagerList> getMyVotedVillagers(String memberId) {
+        if (memberId == null || memberId.isBlank()) {
+            throw new IllegalArgumentException("memberId is required.");
+        }
+        String voteMonth = currentVoteMonth();
+        return villagerMapper.selectMyVotedVillagers(memberId, voteMonth);
+    }
 }

@@ -33,4 +33,7 @@ public interface BoardMapper {
 
     // 삭제(소프트)
     int softDelete(@Param("boardNo") int boardNo);
+
+    // mypost
+    List<Board> selectBoardsByMember(int memberNo);
 }

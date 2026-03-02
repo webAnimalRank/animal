@@ -20,4 +20,7 @@ public interface BoardService {
 
     // 삭제(소프트)
     boolean deleteBoard(int boardNo);
+
+    // mypost
+    List<Board> getBoardsByMember(int memberNo);
 }

@@ -56,4 +56,10 @@ public interface VillagerMapper {
     int increaseVillagerVotes(@Param("villagerNos") List<Integer> villagerNos);
 
     List<VoteTopItem> selectMonthlyTop3(@Param("voteMonth") String voteMonth);
+
+    // memberId와 voteMonth에 해당하는 투표한 동물 목록 조회
+    List<VillagerList> selectMyVotedVillagers(
+            @Param("memberId") String memberId,
+            @Param("voteMonth") String voteMonth
+    );
 }

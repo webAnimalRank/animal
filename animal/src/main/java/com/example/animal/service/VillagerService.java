@@ -22,4 +22,6 @@ public interface VillagerService {
     VoteTopResponse getMonthlyTop3();
 
     VoteStatusResponse getMyVoteStatus(String memberId);
+
+    List<VillagerList> getMyVotedVillagers(String memberId);
 }
