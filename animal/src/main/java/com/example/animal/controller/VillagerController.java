@@ -106,10 +106,8 @@ public class VillagerController {
 
     // mypage mypick 호출시 해당 회원이 현재 달에 투표한 동물들의 list 반환
     @GetMapping("/votes/me/list")
-    public List<VillagerList> getMyVotedVillagers(
-            @RequestHeader(value = "Authorization", required = false) String authorization
-    ) {
-        String memberId = resolveMemberId(authorization);
-        return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberId));
+    public List<VillagerList> getMyVotedVillagers(HttpSession session) {
+    String memberId = resolveMemberId(session);
+    return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberId));
     }
 }
