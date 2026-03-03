@@ -733,20 +733,6 @@ UPDATE villager
 SET villager_image = 'https://dodo.ac/np/images/5/59/Toby_NH_Model.png'
 WHERE villager_no = 387;
 
--- =========================================================
---  02-23 월별 인기투표 이력 테이블 (회원당 월 3표 제한용)
--- =========================================================
-CREATE TABLE IF NOT EXISTS villager_vote_history (
-    vote_no      BIGINT AUTO_INCREMENT PRIMARY KEY,
-    member_id    VARCHAR(50) NOT NULL,
-    villager_no  INT NOT NULL,
-    vote_month   CHAR(7) NOT NULL COMMENT 'YYYY-MM',
-    vote_date    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_vote_member_month (member_id, vote_month),
-    INDEX idx_vote_month_villager (vote_month, villager_no),
-    CONSTRAINT fk_vote_history_villager FOREIGN KEY (villager_no) REFERENCES villager(villager_no)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 update villager SET villager_image ='https://dodo.ac/np/images/4/4e/Agnes_NH_Transparent.png' where villager_no=4;
 update villager SET villager_image ='https://dodo.ac/np/images/c/c6/Aurora_NH_Transparent.png' where villager_no=22;
 update villager SET villager_image ='https://dodo.ac/np/images/9/9c/Bettina_NH_Transparent.png' where villager_no=39;
@@ -764,3 +750,24 @@ update villager SET villager_image ='https://dodo.ac/np/images/7/7c/Rowan_NH_Tra
 update villager SET villager_image ='https://dodo.ac/np/images/6/69/Tank_NH_Transparent.png' where villager_no=378;
 update villager SET villager_image ='https://dodo.ac/np/images/5/59/Vesta_NH_Transparent.png' where villager_no=397;
 update villager SET villager_image ='https://dodo.ac/np/images/5/54/Octavian_NH_Transparent.png' where villager_no=269;
+
+-- villager_vote_history 테이블에 member_id 컬럼을 member_no로 변경 (외래키 참조를 위해)
+DROP TABLE IF EXISTS villager_vote_history;
+
+CREATE TABLE villager_vote_history (
+    vote_no      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    member_no    INT NOT NULL,
+    villager_no  INT NOT NULL,
+    vote_month   CHAR(7) NOT NULL COMMENT 'YYYY-MM',
+    vote_date    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_vote_member_month (member_no, vote_month),
+    INDEX idx_vote_month_villager (vote_month, villager_no),
+    CONSTRAINT fk_vote_history_member
+        FOREIGN KEY (member_no) REFERENCES member(member_no)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_vote_history_villager
+        FOREIGN KEY (villager_no) REFERENCES villager(villager_no)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+select * from villager_vote_history;
