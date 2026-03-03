@@ -195,7 +195,7 @@
             v.villager_birth AS villagerBirth
         FROM villager_vote_history vh
         JOIN villager v ON vh.villager_no = v.villager_no
-        WHERE vh.member_id = #{memberId}
+        WHERE vh.member_no = #{memberNo}
           AND vh.vote_month = #{voteMonth}
         ORDER BY vh.vote_date DESC
         LIMIT 3
