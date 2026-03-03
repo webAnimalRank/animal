@@ -132,7 +132,7 @@
     <select id="countMonthlyVotesByMember" resultType="int">
         SELECT COUNT(*)
         FROM villager_vote_history
-        WHERE member_id = #{memberId}
+        WHERE member_no = #{memberNo}
           AND vote_month = #{voteMonth}
     </select>
 
@@ -147,12 +147,12 @@
 
     <insert id="insertVoteHistories">
         INSERT INTO villager_vote_history (
-            member_id,
+            member_no,
             villager_no,
             vote_month
         ) VALUES
         <foreach collection="villagerNos" item="villagerNo" separator=",">
-            (#{memberId}, #{villagerNo}, #{voteMonth})
+            (#{memberNo}, #{villagerNo}, #{voteMonth})
         </foreach>
     </insert>
 

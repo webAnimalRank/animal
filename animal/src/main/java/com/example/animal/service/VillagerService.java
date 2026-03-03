@@ -17,11 +17,11 @@ public interface VillagerService {
 
     List<VillagerList> searchVillagers(Integer type, Integer sex, String birthMonth, String debut, String keyword);
 
-    VoteStatusResponse submitVotes(String memberId, List<Integer> villagerNos);
+    VoteStatusResponse submitVotes(int memberNo, List<Integer> villagerNos);
 
     VoteTopResponse getMonthlyTop3();
 
-    VoteStatusResponse getMyVoteStatus(String memberId);
+    VoteStatusResponse getMyVoteStatus(int memberNo);
 
-    List<VillagerList> getMyVotedVillagers(String memberId);
+    List<VillagerList> getMyVotedVillagers(int memberNo);
 }

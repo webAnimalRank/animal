@@ -11,7 +11,14 @@ import com.example.animal.service.VillagerService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -59,18 +66,16 @@ public class VillagerController {
             HttpSession session,
             @RequestBody VoteSubmitRequest request
     ) {
-        String memberId = resolveMemberId(session);
+        int memberNo = requireMemberNo(session);
         return handleBadRequestAndConflict(
-                () -> villagerService.submitVotes(memberId, request.getVillagerNos())
+                () -> villagerService.submitVotes(memberNo, request.getVillagerNos())
         );
     }
 
     @GetMapping("/votes/me")
-    public VoteStatusResponse getMyVoteStatus(
-            HttpSession session
-    ) {
-        String memberId = resolveMemberId(session);
-        return handleBadRequest(() -> villagerService.getMyVoteStatus(memberId));
+    public VoteStatusResponse getMyVoteStatus(HttpSession session) {
+        int memberNo = requireMemberNo(session);
+        return handleBadRequest(() -> villagerService.getMyVoteStatus(memberNo));
     }
 
     @GetMapping("/votes/top")
@@ -78,12 +83,18 @@ public class VillagerController {
         return villagerService.getMonthlyTop3();
     }
 
-    private String resolveMemberId(HttpSession session) {
+    @GetMapping("/votes/me/list")
+    public List<VillagerList> getMyVotedVillagers(HttpSession session) {
+        int memberNo = requireMemberNo(session);
+        return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberNo));
+    }
+
+    private int requireMemberNo(HttpSession session) {
         MemberDto member = (MemberDto) session.getAttribute("loginMember");
-        if (member == null || member.getMemberId() == null || member.getMemberId().isBlank()) {
+        if (member == null || member.getMemberNo() <= 0) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login required.");
         }
-        return member.getMemberId();
+        return member.getMemberNo();
     }
 
     private <T> T handleBadRequest(Supplier<T> action) {
@@ -102,12 +113,5 @@ public class VillagerController {
         } catch (IllegalStateException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
         }
-    }
-
-    // mypage mypick 호출시 해당 회원이 현재 달에 투표한 동물들의 list 반환
-    @GetMapping("/votes/me/list")
-    public List<VillagerList> getMyVotedVillagers(HttpSession session) {
-    String memberId = resolveMemberId(session);
-    return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberId));
     }
 }

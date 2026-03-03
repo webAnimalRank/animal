@@ -4,13 +4,22 @@ import com.example.animal.dto.NookipediaVillagerDto;
 import com.example.animal.mapper.VillagerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class VillagerSyncService {
+
+    private static final String NOOKIPEDIA_VILLAGER_API =
+            "https://api.nookipedia.com/villagers?game=nh&nhdetails=true";
+    private static final String API_ACCEPT_VERSION = "1.7.0";
+    private static final int DEFAULT_VILLAGER_CATEGORY = 1;
+    private static final int OTHER_VILLAGER_TYPE = 0;
 
     private final VillagerMapper villagerMapper;
     private final RestTemplate restTemplate = new RestTemplate();
@@ -23,65 +32,53 @@ public class VillagerSyncService {
         if (villagers == null || villagers.length == 0) return 0;
 
         int affected = 0;
-
-        for (NookipediaVillagerDto v : villagers) {
-            String nameEn = v.getName();       // Ace
+        for (NookipediaVillagerDto dto : villagers) {
+            String nameEn = dto.getName();
             if (nameEn == null || nameEn.isBlank()) continue;
 
-            // 한글명 없음 → 영문명 그대로 사용
-            String name = v.getName();
-
-            // 종족 (Bird, Cat ...)
-            String species = v.getSpecies();
-
-            // 성별 (Male / Female)
-            String gender = v.getGender();
-
-            // villager_type 매핑
-            Integer type = villagerMapper.findTypeByEnglishName(species);
-            if (type == null) type = 0; // Other
-
-            // 성별 숫자 변환
-            Integer sex = null;
-            if ("Male".equalsIgnoreCase(gender)) sex = 1;
-            else if ("Female".equalsIgnoreCase(gender)) sex = 0;
-
-            // 이미지 / 아이콘
-            String imageUrl = v.getNhDetails() != null ? v.getNhDetails().getImageUrl() : null;
-            String iconUrl  = v.getNhDetails() != null ? v.getNhDetails().getIconUrl() : null;
-
-            // 생일 MM-DD
-            String birth = toMmDd(v.getBirthdayMonth(), v.getBirthdayDay());
-
-            // 🔥 여기서 upsert (NOT NULL 컬럼 포함)
             affected += villagerMapper.upsertFromNookipedia(
-                1,          // villager_category (기본값)
-                type,       // villager_type
-                name,       // villager_name (NOT NULL)
-                nameEn,     // villager_name_en (UNIQUE)
-                imageUrl,
-                iconUrl,
-                birth,
-                v.getDebut(),
-                sex
+                    DEFAULT_VILLAGER_CATEGORY,
+                    toVillagerType(dto.getSpecies()),
+                    dto.getName(),
+                    nameEn,
+                    extractImageUrl(dto),
+                    extractIconUrl(dto),
+                    toMmDd(dto.getBirthdayMonth(), dto.getBirthdayDay()),
+                    dto.getDebut(),
+                    toSex(dto.getGender())
             );
         }
         return affected;
     }
 
     private NookipediaVillagerDto[] fetchVillagers() {
-        String url = "https://api.nookipedia.com/villagers?game=nh&nhdetails=true";
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-API-KEY", apiKey);
-        headers.set("Accept-Version", "1.7.0");
+        headers.set("Accept-Version", API_ACCEPT_VERSION);
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<NookipediaVillagerDto[]> response =
+                restTemplate.exchange(NOOKIPEDIA_VILLAGER_API, HttpMethod.GET, entity, NookipediaVillagerDto[].class);
+        return response.getBody();
+    }
 
-        ResponseEntity<NookipediaVillagerDto[]> res =
-            restTemplate.exchange(url, HttpMethod.GET, entity, NookipediaVillagerDto[].class);
+    private Integer toVillagerType(String species) {
+        Integer type = villagerMapper.findTypeByEnglishName(species);
+        return type == null ? OTHER_VILLAGER_TYPE : type;
+    }
 
-        return res.getBody();
+    private Integer toSex(String gender) {
+        if ("Male".equalsIgnoreCase(gender)) return 1;
+        if ("Female".equalsIgnoreCase(gender)) return 0;
+        return null;
+    }
+
+    private String extractImageUrl(NookipediaVillagerDto dto) {
+        return dto.getNhDetails() != null ? dto.getNhDetails().getImageUrl() : null;
+    }
+
+    private String extractIconUrl(NookipediaVillagerDto dto) {
+        return dto.getNhDetails() != null ? dto.getNhDetails().getIconUrl() : null;
     }
 
     private String toMmDd(String monthEn, Integer day) {

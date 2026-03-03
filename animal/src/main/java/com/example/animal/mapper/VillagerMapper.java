@@ -12,43 +12,42 @@ import java.util.List;
 @Mapper
 public interface VillagerMapper {
     List<VillagerList> selectVillagers();
+
     List<VillagerTypeOption> selectVillagerTypes();
+
     VillagerDetail selectVillagerByNo(int villagerNo);
 
-    // 엔드포인트 1개 sync에 필요한 업서트 1방 메서드
     int upsertFromNookipedia(
-    @Param("category") int category,
-    @Param("type") int type,
-    @Param("name") String name,
-    @Param("nameEn") String nameEn,
-    @Param("imageUrl") String imageUrl,
-    @Param("iconUrl") String iconUrl,
-    @Param("birth") String birth,
-    @Param("debut") String debut,
-    @Param("sex") Integer sex
-);
+            @Param("category") int category,
+            @Param("type") int type,
+            @Param("name") String name,
+            @Param("nameEn") String nameEn,
+            @Param("imageUrl") String imageUrl,
+            @Param("iconUrl") String iconUrl,
+            @Param("birth") String birth,
+            @Param("debut") String debut,
+            @Param("sex") Integer sex
+    );
 
-    // (선택) 타입 매핑까지 VillagerMapper로 합치고 싶으면 이 메서드도 여기로
     Integer findTypeByEnglishName(@Param("typeNameEn") String typeNameEn);
 
-    // 검색 기능을 위한 메서드 추가
     List<VillagerList> searchVillagers(
-        @Param("type") Integer type,
-        @Param("sex") Integer sex,
-        @Param("birthMonth") String birthMonth,
-        @Param("debut") String debut,
-        @Param("keyword") String keyword
+            @Param("type") Integer type,
+            @Param("sex") Integer sex,
+            @Param("birthMonth") String birthMonth,
+            @Param("debut") String debut,
+            @Param("keyword") String keyword
     );
 
     int countMonthlyVotesByMember(
-            @Param("memberId") String memberId,
+            @Param("memberNo") int memberNo,
             @Param("voteMonth") String voteMonth
     );
 
     int countExistingVillagers(@Param("villagerNos") List<Integer> villagerNos);
 
     int insertVoteHistories(
-            @Param("memberId") String memberId,
+            @Param("memberNo") int memberNo,
             @Param("voteMonth") String voteMonth,
             @Param("villagerNos") List<Integer> villagerNos
     );
@@ -57,9 +56,8 @@ public interface VillagerMapper {
 
     List<VoteTopItem> selectMonthlyTop3(@Param("voteMonth") String voteMonth);
 
-    // memberId와 voteMonth에 해당하는 투표한 동물 목록 조회
     List<VillagerList> selectMyVotedVillagers(
-            @Param("memberId") String memberId,
+            @Param("memberNo") int memberNo,
             @Param("voteMonth") String voteMonth
     );
 }
