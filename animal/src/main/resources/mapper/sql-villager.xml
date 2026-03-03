@@ -13,7 +13,7 @@
             v.villager_image_icon   AS villagerImageIcon,
             v.villager_birth        AS villagerBirth
         FROM villager v
-        ORDER BY v.villager_no DESC
+        ORDER BY v.villager_name COLLATE utf8mb4_unicode_ci ASC
     </select>
 
     <select id="selectVillagerTypes" resultType="com.example.animal.dto.VillagerTypeOption">
@@ -184,19 +184,6 @@
         ) s
         JOIN villager v ON v.villager_no = s.villager_no
         ORDER BY s.votes DESC, s.villager_no ASC
-    </select>
-
-    <!-- mypage mypick -->
-    <select id="selectMyVotedVillagers" resultType="com.example.animal.dto.VillagerList">
-        SELECT v.villager_no AS villagerNo,
-            v.villager_name AS villagerName,
-            v.villager_image_icon AS villagerImageIcon,
-            v.villager_birth AS villagerBirth
-        FROM vote_history vh
-        JOIN villager v ON vh.villager_no = v.villager_no
-        WHERE vh.member_id = #{memberId}
-        AND vh.vote_month = #{voteMonth}
-        ORDER BY vh.vote_date DESC
     </select>
 
 </mapper>
