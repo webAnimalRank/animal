@@ -733,8 +733,6 @@ UPDATE villager
 SET villager_image = 'https://dodo.ac/np/images/5/59/Toby_NH_Model.png'
 WHERE villager_no = 387;
 
-select * from villager;
-
 -- =========================================================
 --  02-23 월별 인기투표 이력 테이블 (회원당 월 3표 제한용)
 -- =========================================================
@@ -746,6 +744,23 @@ CREATE TABLE IF NOT EXISTS villager_vote_history (
     vote_date    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_vote_member_month (member_id, vote_month),
     INDEX idx_vote_month_villager (vote_month, villager_no),
-    CONSTRAINT fk_vote_history_villager
-        FOREIGN KEY (villager_no) REFERENCES villager(villager_no)
+    CONSTRAINT fk_vote_history_villager FOREIGN KEY (villager_no) REFERENCES villager(villager_no)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+update villager SET villager_image ='https://dodo.ac/np/images/4/4e/Agnes_NH_Transparent.png' where villager_no=4;
+update villager SET villager_image ='https://dodo.ac/np/images/c/c6/Aurora_NH_Transparent.png' where villager_no=22;
+update villager SET villager_image ='https://dodo.ac/np/images/9/9c/Bettina_NH_Transparent.png' where villager_no=39;
+update villager SET villager_image ='https://dodo.ac/np/images/0/00/Bunnie_NH_Transparent.png' where villager_no=65;
+update villager SET villager_image ='https://dodo.ac/np/images/a/ad/Chops_NH_Transparent.png' where villager_no=90;
+update villager SET villager_image ='https://dodo.ac/np/images/1/1a/Curlos_NH_Transparent.png' where villager_no=108;
+update villager SET villager_image ='https://dodo.ac/np/images/9/95/Cole_NH_Transparent.png' where villager_no=101;
+update villager SET villager_image ='https://dodo.ac/np/images/9/9e/Fang_NH_Transparent.png' where villager_no=142;
+update villager SET villager_image ='https://dodo.ac/np/images/a/a5/Gladys_NH_Transparent.png' where villager_no=165;
+update villager SET villager_image ='https://dodo.ac/np/images/3/3b/Jay_NH_1.png' where villager_no=194;
+update villager SET villager_image ='https://dodo.ac/np/images/0/0b/Julia_NH_Transparent.png' where villager_no=199;
+update villager SET villager_image ='https://dodo.ac/np/images/0/06/Peanut_NH_Transparent.png' where villager_no=284;
+update villager SET villager_image ='https://dodo.ac/np/images/c/c2/Rosie_NH_1.png' where villager_no=336;
+update villager SET villager_image ='https://dodo.ac/np/images/7/7c/Rowan_NH_Transparent.png' where villager_no=338;
+update villager SET villager_image ='https://dodo.ac/np/images/6/69/Tank_NH_Transparent.png' where villager_no=378;
+update villager SET villager_image ='https://dodo.ac/np/images/5/59/Vesta_NH_Transparent.png' where villager_no=397;
+update villager SET villager_image ='https://dodo.ac/np/images/5/54/Octavian_NH_Transparent.png' where villager_no=269;
