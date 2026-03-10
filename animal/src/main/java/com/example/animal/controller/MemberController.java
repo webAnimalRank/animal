@@ -56,10 +56,18 @@ public class MemberController {
     @PutMapping("/{memberNo}")
     public int memberUpdate(
             @PathVariable int memberNo,
-            @RequestBody MemberDto memberDto) {
+            @RequestBody MemberDto memberDto, HttpSession session) {
 
         memberDto.setMemberNo(memberNo);
-        return memberService.updateMember(memberDto);
+        
+        int result = memberService.updateMember(memberDto);
+
+        // 수정 성공하면 세션도 업데이트
+        if(result > 0){
+            session.setAttribute("loginMember", memberDto);
+        }
+
+        return result;
     }
 
     // 회원 삭제
