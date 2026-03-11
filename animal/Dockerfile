@@ -11,4 +11,4 @@ WORKDIR /app
 COPY --from=build /workspace/app/build/libs/*.jar app.jar
 
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+CMD ["sh", "-c", "java -jar app.jar --spring.profiles.active=prod --server.port=${PORT:-8080}"]
