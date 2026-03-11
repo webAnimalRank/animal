@@ -56,5 +56,6 @@ public class MemberSerivceImpl implements MemberService {
     }
 
     return member; // 토큰 ❌ 회원정보 반환
-}
+    }
+
 }

@@ -14,4 +14,6 @@ public class MemberDto {
     private int isActive;
     private Timestamp createDate;
     private Timestamp updateDate;
+
+    private String currentPw; // 기존 비밀번호 확인용
 }
