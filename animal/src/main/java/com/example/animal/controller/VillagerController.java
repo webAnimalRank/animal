@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 @RequestMapping("/api/villagers")
 @CrossOrigin(
-        origins = "http://localhost:5173",
+        origins = {"http://localhost:5173", "https://animalcrossingrank.netlify.app"},
         allowCredentials = "true"
 )
 public class VillagerController {
