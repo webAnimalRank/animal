@@ -109,10 +109,26 @@ public class VillagerServiceImpl implements VillagerService {
         return YearMonth.now().toString();
     }
 
+    // @Override
+    // public List<VillagerList> getMyVotedVillagers(int memberNo) {
+    //     int validatedMemberNo = requireMemberNo(memberNo);
+    //     String voteMonth = currentVoteMonth();
+    //     return villagerMapper.selectMyVotedVillagers(validatedMemberNo, voteMonth);
+    // }
+
     @Override
-    public List<VillagerList> getMyVotedVillagers(int memberNo) {
+    public List<VillagerList> getMyVotedVillagers(int memberNo, Integer year, Integer month) {
         int validatedMemberNo = requireMemberNo(memberNo);
-        String voteMonth = currentVoteMonth();
+
+        // year, month가 null이면 현재 월 기준
+        YearMonth ym;
+        if (year != null && month != null) {
+            ym = YearMonth.of(year, month);
+        } else {
+            ym = YearMonth.now();
+        }
+
+        String voteMonth = ym.toString(); // "YYYY-MM"
         return villagerMapper.selectMyVotedVillagers(validatedMemberNo, voteMonth);
     }
 

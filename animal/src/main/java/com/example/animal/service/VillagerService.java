@@ -23,5 +23,7 @@ public interface VillagerService {
 
     VoteStatusResponse getMyVoteStatus(int memberNo);
 
-    List<VillagerList> getMyVotedVillagers(int memberNo);
+    //List<VillagerList> getMyVotedVillagers(int memberNo);
+
+    List<VillagerList> getMyVotedVillagers(int memberNo, Integer year, Integer month);
 }

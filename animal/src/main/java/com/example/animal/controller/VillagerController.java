@@ -83,10 +83,20 @@ public class VillagerController {
         return villagerService.getMonthlyTop3();
     }
 
+    // @GetMapping("/votes/me/list")
+    // public List<VillagerList> getMyVotedVillagers(HttpSession session) {
+    //     int memberNo = requireMemberNo(session);
+    //     return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberNo));
+    // }
+
     @GetMapping("/votes/me/list")
-    public List<VillagerList> getMyVotedVillagers(HttpSession session) {
+    public List<VillagerList> getMyVotedVillagers(
+            HttpSession session,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month
+    ) {
         int memberNo = requireMemberNo(session);
-        return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberNo));
+        return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberNo, year, month));
     }
 
     private int requireMemberNo(HttpSession session) {
