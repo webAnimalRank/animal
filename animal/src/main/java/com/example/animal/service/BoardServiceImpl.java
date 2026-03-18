@@ -56,13 +56,22 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean updateBoard(int boardNo, Board board) {
-        return boardMapper.updateBoard(boardNo, board) == 1;
+    public boolean updateBoard(int boardNo, Board board, int memberNo) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board request body is required.");
+        }
+
+        applyUpdateDefaults(board, memberNo);
+        return boardMapper.updateBoard(boardNo, board, memberNo) == 1;
     }
 
     @Override
-    public boolean deleteBoard(int boardNo) {
-        return boardMapper.softDelete(boardNo) == 1;
+    public boolean deleteBoard(int boardNo, int memberNo) {
+        if (memberNo <= 0) {
+            throw new IllegalArgumentException("memberNo is required.");
+        }
+
+        return boardMapper.softDelete(boardNo, memberNo) == 1;
     }
 
     @Override
@@ -111,6 +120,21 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private void applyCreateDefaults(Board board) {
+        validateBoardContent(board);
+        board.setBoardKind(normalizeCreateKind(board.getBoardKind()));
+    }
+
+    private void applyUpdateDefaults(Board board, int memberNo) {
+        if (memberNo <= 0) {
+            throw new IllegalArgumentException("memberNo is required.");
+        }
+
+        validateBoardContent(board);
+        board.setMemberNo(memberNo);
+        board.setBoardKind(normalizeCreateKind(board.getBoardKind()));
+    }
+
+    private void validateBoardContent(Board board) {
         String title = trimToNull(board.getBoardTitle());
         if (title == null) {
             throw new IllegalArgumentException("boardTitle is required.");
@@ -132,8 +156,6 @@ public class BoardServiceImpl implements BoardService {
             throw new IllegalArgumentException("boardWriter is required.");
         }
         board.setBoardWriter(writer);
-
-        board.setBoardKind(normalizeCreateKind(board.getBoardKind()));
     }
 
     private String trimToNull(String value) {

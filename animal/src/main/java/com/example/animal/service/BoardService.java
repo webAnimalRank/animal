@@ -1,26 +1,22 @@
 package com.example.animal.service;
 
 import com.example.animal.dto.Board;
+
 import java.util.List;
 
 public interface BoardService {
 
-    // 목록 + 검색 + 페이징
     List<Board> getBoards(String kind, String search, String keyword, int page, int size);
+
     long getTotalBoards(String kind, String search, String keyword);
 
-    // 상세
     Board getBoardDetail(int boardNo);
 
-    // 등록
     int createBoard(Board board);
 
-    // 수정
-    boolean updateBoard(int boardNo, Board board);
+    boolean updateBoard(int boardNo, Board board, int memberNo);
 
-    // 삭제(소프트)
-    boolean deleteBoard(int boardNo);
+    boolean deleteBoard(int boardNo, int memberNo);
 
-    // mypost
     List<Board> getBoardsByMember(int memberNo);
 }

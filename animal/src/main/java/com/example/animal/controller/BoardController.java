@@ -78,15 +78,21 @@ public class BoardController {
     }
 
     @PutMapping("/{boardNo}")
-    public BoardMutationResponse update(@PathVariable int boardNo, @RequestBody Board board) {
-        boolean ok = boardService.updateBoard(boardNo, board);
-        return new BoardMutationResponse(ok ? 1 : 0, null);
+    public BoardMutationResponse update(@PathVariable int boardNo, @RequestBody Board board, HttpSession session) {
+        MemberDto loginMember = requireLoginMember(session);
+        board.setMemberNo(loginMember.getMemberNo());
+        board.setBoardWriter(loginMember.getMemberName());
+
+        boolean ok = boardService.updateBoard(boardNo, board, loginMember.getMemberNo());
+        return new BoardMutationResponse(ok ? 1 : 0, ok ? boardNo : null);
     }
 
     @DeleteMapping("/{boardNo}")
-    public BoardMutationResponse delete(@PathVariable int boardNo) {
-        boolean ok = boardService.deleteBoard(boardNo);
-        return new BoardMutationResponse(ok ? 1 : 0, null);
+    public BoardMutationResponse delete(@PathVariable int boardNo, HttpSession session) {
+        MemberDto loginMember = requireLoginMember(session);
+
+        boolean ok = boardService.deleteBoard(boardNo, loginMember.getMemberNo());
+        return new BoardMutationResponse(ok ? 1 : 0, ok ? boardNo : null);
     }
 
     @GetMapping("/my")
@@ -106,7 +112,7 @@ public class BoardController {
     private MemberDto requireLoginMember(HttpSession session) {
         MemberDto member = (MemberDto) session.getAttribute("loginMember");
         if (member == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login is required.");
         }
         return member;
     }

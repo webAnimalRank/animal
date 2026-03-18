@@ -1,19 +1,17 @@
 package com.example.animal.mapper;
 
-import java.util.List;
-
+import com.example.animal.dto.Board;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.example.animal.dto.Board;
+import java.util.List;
 
 @Mapper
 public interface BoardMapper {
 
-    // 목록 페이징 + 검색
     long countBoards(@Param("kind") String kind,
-                    @Param("search") String search,
-                    @Param("keyword") String keyword);
+                     @Param("search") String search,
+                     @Param("keyword") String keyword);
 
     List<Board> selectBoardPage(@Param("kind") String kind,
                                 @Param("search") String search,
@@ -21,19 +19,16 @@ public interface BoardMapper {
                                 @Param("offset") int offset,
                                 @Param("size") int size);
 
-    // 상세
     Board selectBoardDetail(@Param("boardNo") int boardNo);
 
-    // 등록
     int insertBoard(Board board);
 
-    // 수정
     int updateBoard(@Param("boardNo") int boardNo,
-                    @Param("board") Board board);
+                    @Param("board") Board board,
+                    @Param("memberNo") int memberNo);
 
-    // 삭제(소프트)
-    int softDelete(@Param("boardNo") int boardNo);
+    int softDelete(@Param("boardNo") int boardNo,
+                   @Param("memberNo") int memberNo);
 
-    // mypost
     List<Board> selectBoardsByMember(int memberNo);
 }
