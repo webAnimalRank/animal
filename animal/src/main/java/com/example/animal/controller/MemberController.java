@@ -26,7 +26,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
 @CrossOrigin(
-    origins = "http://localhost:5173",
+    origins = {
+        "http://localhost:5173",
+        "https://animal-2g13.onrender.com"
+    },
     allowCredentials = "true"
 )
 public class MemberController {

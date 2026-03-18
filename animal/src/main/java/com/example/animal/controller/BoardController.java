@@ -16,7 +16,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/boards")
 @CrossOrigin(
-    origins = "http://localhost:5173",
+    origins = {
+        "http://localhost:5173",
+        "https://animal-2g13.onrender.com"
+    },
     allowCredentials = "true"
 )
 public class BoardController {
