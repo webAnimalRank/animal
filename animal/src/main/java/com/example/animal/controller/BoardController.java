@@ -5,10 +5,21 @@ import com.example.animal.dto.BoardMutationResponse;
 import com.example.animal.dto.BoardPageResponse;
 import com.example.animal.dto.MemberDto;
 import com.example.animal.service.BoardService;
-
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -56,9 +67,14 @@ public class BoardController {
     }
 
     @PostMapping
-    public BoardMutationResponse create(@RequestBody Board board) {
+    public ResponseEntity<BoardMutationResponse> create(@RequestBody Board board, HttpSession session) {
+        MemberDto loginMember = requireLoginMember(session);
+        board.setMemberNo(loginMember.getMemberNo());
+        board.setBoardWriter(loginMember.getMemberName());
+
         int result = boardService.createBoard(board);
-        return new BoardMutationResponse(result, board.getBoardNo());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BoardMutationResponse(result, board.getBoardNo()));
     }
 
     @PutMapping("/{boardNo}")
@@ -73,6 +89,12 @@ public class BoardController {
         return new BoardMutationResponse(ok ? 1 : 0, null);
     }
 
+    @GetMapping("/my")
+    public List<Board> myBoards(HttpSession session) {
+        MemberDto member = requireLoginMember(session);
+        return boardService.getBoardsByMember(member.getMemberNo());
+    }
+
     private int normalizePage(int page) {
         return Math.max(page, DEFAULT_PAGE);
     }
@@ -81,16 +103,11 @@ public class BoardController {
         return Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
     }
 
-    // mypage mypost api
-    @GetMapping("/my")
-    public List<Board> myBoards(HttpSession session) {
-
-    MemberDto member = (MemberDto) session.getAttribute("loginMember");
-
-    if (member == null) {
-        throw new RuntimeException("로그인 필요");
+    private MemberDto requireLoginMember(HttpSession session) {
+        MemberDto member = (MemberDto) session.getAttribute("loginMember");
+        if (member == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
+        return member;
     }
-
-    return boardService.getBoardsByMember(member.getMemberNo());
-}
 }

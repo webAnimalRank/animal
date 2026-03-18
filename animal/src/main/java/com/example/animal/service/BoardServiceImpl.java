@@ -16,9 +16,9 @@ public class BoardServiceImpl implements BoardService {
     private static final int MIN_SIZE = 1;
     private static final int MAX_SIZE = 50;
     private static final String DEFAULT_KIND = "notice";
+    private static final String DEFAULT_CREATE_KIND = "free";
     private static final String DEFAULT_SEARCH = "titleContent";
-    private static final int DEFAULT_MEMBER_NO = 1;
-    private static final String DEFAULT_WRITER = "익명";
+    private static final Set<String> ALLOWED_BOARD_KINDS = Set.of("notice", "free");
     private static final Set<String> ALLOWED_SEARCH_TYPES = Set.of("title", "content", "titleContent", "writer");
 
     private final BoardMapper boardMapper;
@@ -65,6 +65,11 @@ public class BoardServiceImpl implements BoardService {
         return boardMapper.softDelete(boardNo) == 1;
     }
 
+    @Override
+    public List<Board> getBoardsByMember(int memberNo) {
+        return boardMapper.selectBoardsByMember(memberNo);
+    }
+
     private int normalizePage(int page) {
         return Math.max(page, MIN_PAGE);
     }
@@ -77,7 +82,16 @@ public class BoardServiceImpl implements BoardService {
         if (kind == null || kind.isBlank()) {
             return DEFAULT_KIND;
         }
-        return kind.trim();
+        String trimmed = kind.trim();
+        return ALLOWED_BOARD_KINDS.contains(trimmed) ? trimmed : DEFAULT_KIND;
+    }
+
+    private String normalizeCreateKind(String kind) {
+        if (kind == null || kind.isBlank()) {
+            return DEFAULT_CREATE_KIND;
+        }
+        String trimmed = kind.trim();
+        return ALLOWED_BOARD_KINDS.contains(trimmed) ? trimmed : DEFAULT_CREATE_KIND;
     }
 
     private String normalizeSearch(String search) {
@@ -97,22 +111,36 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private void applyCreateDefaults(Board board) {
-        if (board.getMemberNo() == null) {
-            board.setMemberNo(DEFAULT_MEMBER_NO);
+        String title = trimToNull(board.getBoardTitle());
+        if (title == null) {
+            throw new IllegalArgumentException("boardTitle is required.");
+        }
+        board.setBoardTitle(title);
+
+        String content = trimToNull(board.getBoardContent());
+        if (content == null) {
+            throw new IllegalArgumentException("boardContent is required.");
+        }
+        board.setBoardContent(content);
+
+        if (board.getMemberNo() == null || board.getMemberNo() <= 0) {
+            throw new IllegalArgumentException("memberNo is required.");
         }
 
-        if (board.getBoardWriter() == null || board.getBoardWriter().isBlank()) {
-            board.setBoardWriter(DEFAULT_WRITER);
-        } else {
-            board.setBoardWriter(board.getBoardWriter().trim());
+        String writer = trimToNull(board.getBoardWriter());
+        if (writer == null) {
+            throw new IllegalArgumentException("boardWriter is required.");
         }
+        board.setBoardWriter(writer);
 
-        board.setBoardKind(normalizeKind(board.getBoardKind()));
+        board.setBoardKind(normalizeCreateKind(board.getBoardKind()));
     }
 
-    // mypost
-    @Override
-    public List<Board> getBoardsByMember(int memberNo) {
-        return boardMapper.selectBoardsByMember(memberNo);
+    private String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }
