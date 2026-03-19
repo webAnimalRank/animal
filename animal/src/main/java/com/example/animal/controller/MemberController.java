@@ -28,8 +28,7 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(
     origins = {
         "http://localhost:5173",
-        "https://animal-2g13.onrender.com",
-        "https://0ef352f5.animal-guide.pages.dev"
+        "https://animal-2g13.onrender.com"
     },
     allowCredentials = "true"
 )
