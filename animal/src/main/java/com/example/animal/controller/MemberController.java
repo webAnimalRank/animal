@@ -53,59 +53,6 @@ public class MemberController {
         return memberService.createMember(memberDto);
     }
 
-    // 회원 수정
-    // @PutMapping("/{memberNo}")
-    // public int memberUpdate(
-    //         @PathVariable int memberNo,
-    //         @RequestBody MemberDto memberDto, 
-    //         HttpSession session) {
-
-    //     memberDto.setMemberNo(memberNo);
-        
-    //     int result = memberService.updateMember(memberDto);
-
-    //     // 수정 성공하면 세션도 업데이트
-    //     if(result > 0){
-    //         session.setAttribute("loginMember", memberDto);
-    //     }
-
-    //     return result;
-    // }
-
-    // 회원 수정 260311
-    // @PutMapping("/{memberNo}")
-    // public ResponseEntity<?> memberUpdate(
-    //         @PathVariable int memberNo,
-    //         @RequestBody MemberDto memberDto,
-    //         HttpSession session) {
-
-    //     // 기존 비밀번호 확인
-    //     MemberDto existing = memberService.getMemberByNo(memberNo);
-    //     if (!existing.getMemberPw().equals(memberDto.getCurrentPw())) {
-    //         return ResponseEntity
-    //                 .status(HttpStatus.BAD_REQUEST)
-    //                 .body(Map.of("message", "기존 비밀번호가 틀립니다"));
-    //     }
-
-    //     // 새 비밀번호가 있으면 적용
-    //     if (memberDto.getMemberPw() != null && !memberDto.getMemberPw().isEmpty()) {
-    //         existing.setMemberPw(memberDto.getMemberPw());
-    //     }
-
-    //     existing.setMemberName(memberDto.getMemberName());
-    //     existing.setMemberEmail(memberDto.getMemberEmail());
-
-    //     int result = memberService.updateMember(existing);
-
-    //     if (result > 0) {
-    //         session.setAttribute("loginMember", existing);
-    //         return ResponseEntity.ok(existing); // 업데이트된 member 반환
-    //     }
-
-    //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    //             .body(Map.of("message", "회원정보 수정 실패"));
-    // }
-
     // 회원 수정 260311
     // 회원 수정 (기존 비밀번호 확인 + 새 비밀번호 적용)
     @PutMapping("/{memberNo}")
@@ -134,10 +81,9 @@ public class MemberController {
             existing.setMemberPw(memberDto.getMemberPw());
         }
 
-        // 이름, 이메일 업데이트
+        // 이름, 이메일, 프로필 아이콘 업데이트
         existing.setMemberName(memberDto.getMemberName());
         existing.setMemberEmail(memberDto.getMemberEmail());
-        // ⭐ 프사 추가
         existing.setProfileVillagerNo(memberDto.getProfileVillagerNo());
 
         int result = memberService.updateMember(existing);

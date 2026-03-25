@@ -58,7 +58,7 @@
     <!-- 회원 수정 -->
     <update id="updateMember">
         UPDATE member
-        SET
+        <set>
             member_name = #{memberName},
             member_email = #{memberEmail},
             profile_villager_no = #{profileVillagerNo},
@@ -66,6 +66,7 @@
                 member_pw = #{memberPw},
             </if>
             update_date = NOW()
+        </set>
         WHERE member_no = #{memberNo}
     </update>
 

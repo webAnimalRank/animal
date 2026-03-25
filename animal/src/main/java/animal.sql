@@ -683,3 +683,7 @@ ADD COLUMN profile_villager_no INT,
 ADD CONSTRAINT fk_member_profile_villager
 FOREIGN KEY (profile_villager_no)
 REFERENCES villager(villager_no);
+
+SELECT member_no, profile_villager_no
+FROM member
+WHERE member_no = 1;
