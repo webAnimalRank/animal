@@ -677,3 +677,9 @@ update villager SET villager_image ='https://dodo.ac/np/images/7/7c/Rowan_NH_Tra
 update villager SET villager_image ='https://dodo.ac/np/images/6/69/Tank_NH_Transparent.png' where villager_no=378;
 update villager SET villager_image ='https://dodo.ac/np/images/5/59/Vesta_NH_Transparent.png' where villager_no=397;
 update villager SET villager_image ='https://dodo.ac/np/images/5/54/Octavian_NH_Transparent.png' where villager_no=269;
+
+ALTER TABLE member
+ADD COLUMN profile_villager_no INT,
+ADD CONSTRAINT fk_member_profile_villager
+FOREIGN KEY (profile_villager_no)
+REFERENCES villager(villager_no);

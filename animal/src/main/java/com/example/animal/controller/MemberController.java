@@ -137,6 +137,8 @@ public class MemberController {
         // 이름, 이메일 업데이트
         existing.setMemberName(memberDto.getMemberName());
         existing.setMemberEmail(memberDto.getMemberEmail());
+        // ⭐ 프사 추가
+        existing.setProfileVillagerNo(memberDto.getProfileVillagerNo());
 
         int result = memberService.updateMember(existing);
 
