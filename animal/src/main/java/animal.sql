@@ -684,6 +684,15 @@ ADD CONSTRAINT fk_member_profile_villager
 FOREIGN KEY (profile_villager_no)
 REFERENCES villager(villager_no);
 
+
+-- 프로필 아이콘 수정중 테스트 용 
 SELECT member_no, profile_villager_no
 FROM member
 WHERE member_no = 1;
+UPDATE member
+SET 
+    member_name = '뉴1',
+    member_email = 'new1@g',
+    profile_villager_no = 338, -- 원하는 프사 번호
+    update_date = NOW()
+WHERE member_no = 1; -- 테스트할 회원 번호

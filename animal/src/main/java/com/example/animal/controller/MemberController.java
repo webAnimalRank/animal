@@ -61,6 +61,12 @@ public class MemberController {
             @RequestBody MemberDto memberDto,
             HttpSession session) {
 
+            // ✅ 여기서 들어오는 값 확인
+    System.out.println("✅수정 요청 memberName: " + memberDto.getMemberName());
+    System.out.println("✅수정 요청 memberEmail: " + memberDto.getMemberEmail());
+    System.out.println("✅수정 요청 currentPw: " + memberDto.getCurrentPw());
+    System.out.println("✅수정 요청 profileVillagerNo: " + memberDto.getProfileVillagerNo());
+
         // 기존 회원 정보 조회
         MemberDto existing = memberService.getMemberByNo(memberNo);
 
@@ -95,6 +101,8 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "회원정보 수정 실패"));
+
+        
     }
 
 

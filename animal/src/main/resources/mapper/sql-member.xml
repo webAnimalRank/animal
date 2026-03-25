@@ -4,16 +4,6 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 	<mapper namespace="com.example.animal.mapper.MemberMapper">
-	<!-- <resultMap id="MemberResultMap" type="com.example.animal.dto.MemberDto">
-    <id property="member_no" column="member_no"/>
-    <result property="member_id" column="member_id"/>
-    <result property="member_pw" column="member_pw"/>
-    <result property="member_name" column="member_name"/>
-    <result property="member_email" column="member_email"/>
-    <result property="isactive" column="isactive"/>
-    <result property="create_date" column="create_date"/>
-    <result property="update_date" column="update_date"/>
-	</resultMap> -->
 
 	<!-- 회원 전체 조회 -->
 	<select id="allMemberList" resultType="com.example.animal.dto.MemberDto">
@@ -61,7 +51,9 @@
         <set>
             member_name = #{memberName},
             member_email = #{memberEmail},
-            profile_villager_no = #{profileVillagerNo},
+            <if test="profileVillagerNo != null">
+                profile_villager_no = #{profileVillagerNo},
+            </if>
             <if test="memberPw != null and memberPw != ''">
                 member_pw = #{memberPw},
             </if>
