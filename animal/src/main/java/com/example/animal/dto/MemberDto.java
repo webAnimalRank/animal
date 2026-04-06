@@ -12,6 +12,7 @@ public class MemberDto {
     private String memberName;
     private String memberEmail;
     private int isActive;
+    private Integer isAdmin;
     private Timestamp createDate;
     private Timestamp updateDate;
 

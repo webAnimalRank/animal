@@ -69,6 +69,7 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<BoardMutationResponse> create(@RequestBody Board board, HttpSession session) {
         MemberDto loginMember = requireLoginMember(session);
+        requireAdminForNotice(board.getBoardKind(), loginMember);
         board.setMemberNo(loginMember.getMemberNo());
         board.setBoardWriter(loginMember.getMemberName());
 
@@ -80,6 +81,9 @@ public class BoardController {
     @PutMapping("/{boardNo}")
     public BoardMutationResponse update(@PathVariable int boardNo, @RequestBody Board board, HttpSession session) {
         MemberDto loginMember = requireLoginMember(session);
+        Board existingBoard = boardService.getBoardDetail(boardNo);
+        requireAdminForNotice(existingBoard != null ? existingBoard.getBoardKind() : null, loginMember);
+        requireAdminForNotice(board.getBoardKind(), loginMember);
         board.setMemberNo(loginMember.getMemberNo());
         board.setBoardWriter(loginMember.getMemberName());
 
@@ -90,6 +94,8 @@ public class BoardController {
     @DeleteMapping("/{boardNo}")
     public BoardMutationResponse delete(@PathVariable int boardNo, HttpSession session) {
         MemberDto loginMember = requireLoginMember(session);
+        Board existingBoard = boardService.getBoardDetail(boardNo);
+        requireAdminForNotice(existingBoard != null ? existingBoard.getBoardKind() : null, loginMember);
 
         boolean ok = boardService.deleteBoard(boardNo, loginMember.getMemberNo());
         return new BoardMutationResponse(ok ? 1 : 0, ok ? boardNo : null);
@@ -115,5 +121,19 @@ public class BoardController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login is required.");
         }
         return member;
+    }
+
+    private void requireAdminForNotice(String boardKind, MemberDto member) {
+        if (isNoticeKind(boardKind) && !isAdmin(member)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can manage notice posts.");
+        }
+    }
+
+    private boolean isNoticeKind(String boardKind) {
+        return "notice".equalsIgnoreCase(boardKind == null ? "" : boardKind.trim());
+    }
+
+    private boolean isAdmin(MemberDto member) {
+        return member != null && member.getIsAdmin() != null && member.getIsAdmin() == 1;
     }
 }

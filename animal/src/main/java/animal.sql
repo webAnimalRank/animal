@@ -9,6 +9,7 @@ CREATE TABLE member (
     member_pw     VARCHAR(100) NOT NULL,
     member_name   VARCHAR(50)  NOT NULL,
     member_email  VARCHAR(100),
+    is_admin      TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '0: 일반유저, 1: 관리자',
     isactive      TINYINT(1)   NOT NULL DEFAULT 1 COMMENT '0:비활성화, 1: 활성화',
     create_date   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_date   DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -80,7 +81,7 @@ CREATE TABLE villager_vote_history (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --  MEMBER 
-insert into member (member_id, member_pw, member_name, member_email) values ('jisu123', 'password123', '김지수', 'jisu123@gmail.com');
+insert into member (member_id, member_pw, member_name, member_email, is_admin) values ('jisu123', 'password123', '김지수', 'jisu123@gmail.com', 1);
 
 --  BOARD
 insert into board (board_title, board_content, board_writer, member_no) values ('첫번째 게시글', '안녕하세요 첫번째 게시글입니다.', '김지수', 1);
@@ -696,3 +697,12 @@ SET
     profile_villager_no = 338, -- 원하는 프사 번호
     update_date = NOW()
 WHERE member_no = 1; -- 테스트할 회원 번호
+
+
+-- 관리자 계정 생성 관련 쿼리
+ALTER TABLE member
+ADD COLUMN is_admin TINYINT(1) NOT NULL DEFAULT 0;
+
+UPDATE member
+SET is_admin = 1
+WHERE member_id = 'admin';

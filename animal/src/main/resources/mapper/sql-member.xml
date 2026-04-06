@@ -18,6 +18,7 @@
             member_pw,
             member_name,
             member_email,
+            is_admin,
             profile_villager_no,
             isactive,
             create_date,
