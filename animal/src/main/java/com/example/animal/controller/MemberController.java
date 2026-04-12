@@ -60,15 +60,18 @@ public class MemberController {
             @PathVariable int memberNo,
             @RequestBody MemberDto memberDto,
             HttpSession session) {
-
+                        
+                
+        // 기존 회원 정보 조회
+        MemberDto existing = memberService.getMemberByNo(memberNo);
+        
         // ✅ 여기서 들어오는 값 확인
         System.out.println("✅수정 요청 memberName: " + memberDto.getMemberName());
         System.out.println("✅수정 요청 memberEmail: " + memberDto.getMemberEmail());
         System.out.println("✅수정 요청 currentPw: " + memberDto.getCurrentPw());
-        System.out.println("✅수정 요청 profileVillagerNo: " + memberDto.getProfileVillagerNo());
-
-        // 기존 회원 정보 조회
-        MemberDto existing = memberService.getMemberByNo(memberNo);
+        System.out.println("✅수정 요청 profileVillagerNo: " + memberDto.getProfileVillagerNo());  
+        System.out.println("=== UPDATE 전 데이터 ===");
+        System.out.println(existing);
 
         if (existing == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
