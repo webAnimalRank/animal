@@ -28,6 +28,7 @@ dependencies {
     /*1. Spring Boot Starter*/
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
+	implementation 'org.springframework.session:spring-session-core'
 	
 	compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'                             /* Lombok 애노테이션(@Getter, @Setter 등) 처리.*/
