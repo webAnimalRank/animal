@@ -1,5 +1,6 @@
 package com.example.animal.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.animal.config.JwtTokenProvider;
 import com.example.animal.dto.MemberDto;
 import com.example.animal.service.MemberService;
 
@@ -34,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 )
 public class MemberController {
     private final MemberService memberService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 모든 회원 조회
     @GetMapping
@@ -117,20 +120,22 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-        @RequestBody MemberDto dto,
-        HttpSession session) {
+    public ResponseEntity<?> login(@RequestBody MemberDto dto) {
+        try {
+            MemberDto member = memberService.login(dto);
+            
+            // 1. 여기서 JWT 토큰을 생성합니다. (Access Token)
+            String token = jwtTokenProvider.createToken(member.getMemberId());
 
-    try {
-        MemberDto member = memberService.login(dto);
+            // 2. 세션 대신 토큰을 JSON에 담아서 리턴합니다.
+            Map<String, String> response = new HashMap<>();
+            response.put("accessToken", token);
+            
+            return ResponseEntity.ok(response);
 
-        session.setAttribute("loginMember", member);
-
-        return ResponseEntity.ok().build();
-
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // mypage api
