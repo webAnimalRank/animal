@@ -1,6 +1,6 @@
 package com.example.animal.controller;
 
-import com.example.animal.dto.MemberDto;
+import com.example.animal.config.AuthenticatedMemberProvider;
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
 import com.example.animal.dto.VillagerTypeOption;
@@ -8,7 +8,6 @@ import com.example.animal.dto.VoteStatusResponse;
 import com.example.animal.dto.VoteSubmitRequest;
 import com.example.animal.dto.VoteTopResponse;
 import com.example.animal.service.VillagerService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,6 +32,7 @@ import java.util.function.Supplier;
 )
 public class VillagerController {
 
+    private final AuthenticatedMemberProvider authenticatedMemberProvider;
     private final VillagerService villagerService;
 
     @GetMapping
@@ -62,19 +62,16 @@ public class VillagerController {
     }
 
     @PostMapping("/votes")
-    public VoteStatusResponse submitVotes(
-            HttpSession session,
-            @RequestBody VoteSubmitRequest request
-    ) {
-        int memberNo = requireMemberNo(session);
+    public VoteStatusResponse submitVotes(@RequestBody VoteSubmitRequest request) {
+        int memberNo = requireMemberNo();
         return handleBadRequestAndConflict(
                 () -> villagerService.submitVotes(memberNo, request.getVillagerNos())
         );
     }
 
     @GetMapping("/votes/me")
-    public VoteStatusResponse getMyVoteStatus(HttpSession session) {
-        int memberNo = requireMemberNo(session);
+    public VoteStatusResponse getMyVoteStatus() {
+        int memberNo = requireMemberNo();
         return handleBadRequest(() -> villagerService.getMyVoteStatus(memberNo));
     }
 
@@ -83,28 +80,17 @@ public class VillagerController {
         return villagerService.getMonthlyTop3();
     }
 
-    // @GetMapping("/votes/me/list")
-    // public List<VillagerList> getMyVotedVillagers(HttpSession session) {
-    //     int memberNo = requireMemberNo(session);
-    //     return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberNo));
-    // }
-
     @GetMapping("/votes/me/list")
     public List<VillagerList> getMyVotedVillagers(
-            HttpSession session,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month
     ) {
-        int memberNo = requireMemberNo(session);
+        int memberNo = requireMemberNo();
         return handleBadRequest(() -> villagerService.getMyVotedVillagers(memberNo, year, month));
     }
 
-    private int requireMemberNo(HttpSession session) {
-        MemberDto member = (MemberDto) session.getAttribute("loginMember");
-        if (member == null || member.getMemberNo() <= 0) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login required.");
-        }
-        return member.getMemberNo();
+    private int requireMemberNo() {
+        return authenticatedMemberProvider.getRequiredMember().getMemberNo();
     }
 
     private <T> T handleBadRequest(Supplier<T> action) {

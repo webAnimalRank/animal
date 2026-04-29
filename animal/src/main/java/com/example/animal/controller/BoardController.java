@@ -1,11 +1,11 @@
 package com.example.animal.controller;
 
+import com.example.animal.config.AuthenticatedMemberProvider;
 import com.example.animal.dto.Board;
 import com.example.animal.dto.BoardMutationResponse;
 import com.example.animal.dto.BoardPageResponse;
 import com.example.animal.dto.MemberDto;
 import com.example.animal.service.BoardService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +41,7 @@ public class BoardController {
     private static final int DEFAULT_PAGE = 1;
     private static final int MAX_PAGE_SIZE = 50;
 
+    private final AuthenticatedMemberProvider authenticatedMemberProvider;
     private final BoardService boardService;
 
     @GetMapping
@@ -67,8 +68,8 @@ public class BoardController {
     }
 
     @PostMapping
-    public ResponseEntity<BoardMutationResponse> create(@RequestBody Board board, HttpSession session) {
-        MemberDto loginMember = requireLoginMember(session);
+    public ResponseEntity<BoardMutationResponse> create(@RequestBody Board board) {
+        MemberDto loginMember = authenticatedMemberProvider.getRequiredMember();
         requireAdminForNotice(board.getBoardKind(), loginMember);
         board.setMemberNo(loginMember.getMemberNo());
         board.setBoardWriter(loginMember.getMemberName());
@@ -79,8 +80,8 @@ public class BoardController {
     }
 
     @PutMapping("/{boardNo}")
-    public BoardMutationResponse update(@PathVariable int boardNo, @RequestBody Board board, HttpSession session) {
-        MemberDto loginMember = requireLoginMember(session);
+    public BoardMutationResponse update(@PathVariable int boardNo, @RequestBody Board board) {
+        MemberDto loginMember = authenticatedMemberProvider.getRequiredMember();
         Board existingBoard = boardService.getBoardDetail(boardNo);
         requireAdminForNotice(existingBoard != null ? existingBoard.getBoardKind() : null, loginMember);
         requireAdminForNotice(board.getBoardKind(), loginMember);
@@ -92,8 +93,8 @@ public class BoardController {
     }
 
     @DeleteMapping("/{boardNo}")
-    public BoardMutationResponse delete(@PathVariable int boardNo, HttpSession session) {
-        MemberDto loginMember = requireLoginMember(session);
+    public BoardMutationResponse delete(@PathVariable int boardNo) {
+        MemberDto loginMember = authenticatedMemberProvider.getRequiredMember();
         Board existingBoard = boardService.getBoardDetail(boardNo);
         requireAdminForNotice(existingBoard != null ? existingBoard.getBoardKind() : null, loginMember);
 
@@ -102,8 +103,8 @@ public class BoardController {
     }
 
     @GetMapping("/my")
-    public List<Board> myBoards(HttpSession session) {
-        MemberDto member = requireLoginMember(session);
+    public List<Board> myBoards() {
+        MemberDto member = authenticatedMemberProvider.getRequiredMember();
         return boardService.getBoardsByMember(member.getMemberNo());
     }
 
@@ -113,14 +114,6 @@ public class BoardController {
 
     private int normalizeSize(int size) {
         return Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
-    }
-
-    private MemberDto requireLoginMember(HttpSession session) {
-        MemberDto member = (MemberDto) session.getAttribute("loginMember");
-        if (member == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login is required.");
-        }
-        return member;
     }
 
     private void requireAdminForNotice(String boardKind, MemberDto member) {

@@ -8,6 +8,8 @@ public interface MemberService {
     
     MemberDto getMemberByNo(int memberNo);
 
+    MemberDto getMemberById(String memberId);
+
     int createMember(MemberDto memberDto);
 
     int updateMember(MemberDto memberDto);

@@ -2,6 +2,7 @@ package com.example.animal.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,13 +20,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // API 서버이므로 CSRF 비활성화
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안 함
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/api/members/login", "/sign").permitAll() // 로그인, 회원가입은 그냥 허용
-                .anyRequest().authenticated() // 나머지는 토큰이 있어야 함
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/members", "/api/members/login").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/members", "/api/members/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/boards", "/api/boards/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/villagers/**").permitAll()
+                .anyRequest().authenticated()
             )
-            // 우리가 만든 JWT 필터를 스프링의 기본 인증 필터 앞에 끼워넣음
+            .formLogin(form -> form.disable())
+            .httpBasic(basic -> basic.disable())
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

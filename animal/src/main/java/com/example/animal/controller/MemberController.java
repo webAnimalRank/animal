@@ -1,9 +1,10 @@
 package com.example.animal.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.example.animal.config.AuthenticatedMemberProvider;
+import com.example.animal.config.JwtTokenProvider;
+import com.example.animal.dto.MemberDto;
+import com.example.animal.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,14 +16,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.example.animal.config.JwtTokenProvider;
-import com.example.animal.dto.MemberDto;
-import com.example.animal.service.MemberService;
-
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,125 +33,100 @@ import lombok.RequiredArgsConstructor;
     allowCredentials = "true"
 )
 public class MemberController {
+    private final AuthenticatedMemberProvider authenticatedMemberProvider;
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // 모든 회원 조회
     @GetMapping
     public List<MemberDto> allMemberList() {
         return memberService.allMemberList();
     }
 
-        // 회원 단건 조회
     @GetMapping("/{memberNo}")
     public MemberDto memberDetail(@PathVariable int memberNo) {
         return memberService.getMemberByNo(memberNo);
     }
 
-    // 회원 등록
     @PostMapping
     public int memberInsert(@RequestBody MemberDto memberDto) {
         return memberService.createMember(memberDto);
     }
 
-    // 회원 수정 260311
-    // 회원 수정 (기존 비밀번호 확인 + 새 비밀번호 적용)
     @PutMapping("/{memberNo}")
     public ResponseEntity<?> updateMember(
             @PathVariable int memberNo,
-            @RequestBody MemberDto memberDto,
-            HttpSession session) {
-                        
-                
-        // 기존 회원 정보 조회
-        MemberDto existing = memberService.getMemberByNo(memberNo);
-        
-        // ✅ 여기서 들어오는 값 확인
-        System.out.println("✅수정 요청 memberName: " + memberDto.getMemberName());
-        System.out.println("✅수정 요청 memberEmail: " + memberDto.getMemberEmail());
-        System.out.println("✅수정 요청 currentPw: " + memberDto.getCurrentPw());
-        System.out.println("✅수정 요청 profileVillagerNo: " + memberDto.getProfileVillagerNo());  
-        System.out.println("=== UPDATE 전 데이터 ===");
-        System.out.println(existing);
+            @RequestBody MemberDto memberDto) {
+        MemberDto loginMember = authenticatedMemberProvider.getRequiredMember();
+        validateOwnershipOrAdmin(loginMember, memberNo);
 
+        MemberDto existing = memberService.getMemberByNo(memberNo);
         if (existing == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", "회원 정보가 존재하지 않습니다"));
+                    .body(Map.of("message", "Member not found."));
         }
 
-        // 기존 비밀번호 확인
-        if (memberDto.getCurrentPw() == null ||
-            !existing.getMemberPw().equals(memberDto.getCurrentPw())) {
+        if (memberDto.getCurrentPw() == null || !existing.getMemberPw().equals(memberDto.getCurrentPw())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "기존 비밀번호가 틀립니다"));
+                    .body(Map.of("message", "Current password does not match."));
         }
 
-        // 새 비밀번호 적용 (있으면)
         if (memberDto.getMemberPw() != null && !memberDto.getMemberPw().isEmpty()) {
             existing.setMemberPw(memberDto.getMemberPw());
         }
 
-        // 이름, 이메일, 프로필 아이콘 업데이트
         existing.setMemberName(memberDto.getMemberName());
         existing.setMemberEmail(memberDto.getMemberEmail());
         existing.setProfileVillagerNo(memberDto.getProfileVillagerNo());
 
         int result = memberService.updateMember(existing);
-
         if (result > 0) {
-            session.setAttribute("loginMember", existing);  // 세션 업데이트
-            return ResponseEntity.ok(existing);
+            return ResponseEntity.ok(memberService.getMemberByNo(memberNo));
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("message", "회원정보 수정 실패"));
-
-        
+                .body(Map.of("message", "Failed to update member."));
     }
 
-
-    // 회원 삭제
     @DeleteMapping("/{memberNo}")
     public int memberDelete(@PathVariable int memberNo) {
+        MemberDto loginMember = authenticatedMemberProvider.getRequiredMember();
+        validateOwnershipOrAdmin(loginMember, memberNo);
         return memberService.deleteMember(memberNo);
     }
 
-    // 로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody MemberDto dto) {
         try {
             MemberDto member = memberService.login(dto);
-            
-            // 1. 여기서 JWT 토큰을 생성합니다. (Access Token)
-            String token = jwtTokenProvider.createToken(member.getMemberId());
 
-            // 2. 세션 대신 토큰을 JSON에 담아서 리턴합니다.
             Map<String, String> response = new HashMap<>();
-            response.put("accessToken", token);
-            
-            return ResponseEntity.ok(response);
+            response.put("accessToken", jwtTokenProvider.createToken(member.getMemberId()));
 
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
-    // mypage api
     @GetMapping("/me")
-    public ResponseEntity<MemberDto> myPage(HttpSession session) {
-        MemberDto member = (MemberDto) session.getAttribute("loginMember");
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        return ResponseEntity.ok(member);
+    public ResponseEntity<MemberDto> myPage() {
+        return ResponseEntity.ok(authenticatedMemberProvider.getRequiredMember());
     }
 
-    // logout api
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-    session.invalidate(); // 세션 삭제
-    return ResponseEntity.ok().build();
-}
-    
+    public ResponseEntity<?> logout() {
+        return ResponseEntity.ok().build();
+    }
+
+    private void validateOwnershipOrAdmin(MemberDto loginMember, int targetMemberNo) {
+        if (loginMember.getMemberNo() == targetMemberNo) {
+            return;
+        }
+
+        if (loginMember.getIsAdmin() != null && loginMember.getIsAdmin() == 1) {
+            return;
+        }
+
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to access this member.");
+    }
 }
