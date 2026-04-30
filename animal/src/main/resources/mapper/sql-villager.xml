@@ -186,6 +186,26 @@
         ORDER BY s.votes DESC, s.villager_no ASC
     </select>
 
+    <select id="selectMonthlyRanking" resultType="com.example.animal.dto.VoteTopItem">
+        SELECT
+            s.villager_no AS villagerNo,
+            v.villager_name AS villagerName,
+            v.villager_image AS villagerImage,
+            v.villager_image_icon AS villagerImageIcon,
+            s.votes AS votes
+        FROM (
+            SELECT
+                villager_no,
+                COUNT(*) AS votes
+            FROM villager_vote_history
+            WHERE vote_month = #{voteMonth}
+            GROUP BY villager_no
+            ORDER BY votes DESC, villager_no ASC
+        ) s
+        JOIN villager v ON v.villager_no = s.villager_no
+        ORDER BY s.votes DESC, s.villager_no ASC
+    </select>
+
     <select id="selectMyVotedVillagers" resultType="com.example.animal.dto.VillagerList">
         SELECT
             v.villager_no AS villagerNo,

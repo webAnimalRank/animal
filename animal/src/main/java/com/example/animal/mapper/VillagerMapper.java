@@ -56,6 +56,8 @@ public interface VillagerMapper {
 
     List<VoteTopItem> selectMonthlyTop3(@Param("voteMonth") String voteMonth);
 
+    List<VoteTopItem> selectMonthlyRanking(@Param("voteMonth") String voteMonth);
+
     List<VillagerList> selectMyVotedVillagers(
             @Param("memberNo") int memberNo,
             @Param("voteMonth") String voteMonth

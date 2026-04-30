@@ -4,6 +4,7 @@ import com.example.animal.config.AuthenticatedMemberProvider;
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
 import com.example.animal.dto.VillagerTypeOption;
+import com.example.animal.dto.VoteRankingResponse;
 import com.example.animal.dto.VoteStatusResponse;
 import com.example.animal.dto.VoteSubmitRequest;
 import com.example.animal.dto.VoteTopResponse;
@@ -78,6 +79,11 @@ public class VillagerController {
     @GetMapping("/votes/top")
     public VoteTopResponse getMonthlyTop3() {
         return villagerService.getMonthlyTop3();
+    }
+
+    @GetMapping("/votes/ranking")
+    public VoteRankingResponse getMonthlyRanking() {
+        return villagerService.getMonthlyRanking();
     }
 
     @GetMapping("/votes/me/list")

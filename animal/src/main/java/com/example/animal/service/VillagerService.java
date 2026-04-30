@@ -3,6 +3,7 @@ package com.example.animal.service;
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
 import com.example.animal.dto.VillagerTypeOption;
+import com.example.animal.dto.VoteRankingResponse;
 import com.example.animal.dto.VoteStatusResponse;
 import com.example.animal.dto.VoteTopResponse;
 
@@ -20,6 +21,8 @@ public interface VillagerService {
     VoteStatusResponse submitVotes(int memberNo, List<Integer> villagerNos);
 
     VoteTopResponse getMonthlyTop3();
+
+    VoteRankingResponse getMonthlyRanking();
 
     VoteStatusResponse getMyVoteStatus(int memberNo);
 

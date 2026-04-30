@@ -3,6 +3,7 @@ package com.example.animal.service;
 import com.example.animal.dto.VillagerDetail;
 import com.example.animal.dto.VillagerList;
 import com.example.animal.dto.VillagerTypeOption;
+import com.example.animal.dto.VoteRankingResponse;
 import com.example.animal.dto.VoteStatusResponse;
 import com.example.animal.dto.VoteTopItem;
 import com.example.animal.dto.VoteTopResponse;
@@ -91,10 +92,16 @@ public class VillagerServiceImpl implements VillagerService {
     public VoteTopResponse getMonthlyTop3() {
         String voteMonth = currentVoteMonth();
         List<VoteTopItem> items = villagerMapper.selectMonthlyTop3(voteMonth);
-        for (int i = 0; i < items.size(); i++) {
-            items.get(i).setRank(i + 1);
-        }
+        assignRanks(items);
         return new VoteTopResponse(voteMonth, items);
+    }
+
+    @Override
+    public VoteRankingResponse getMonthlyRanking() {
+        String voteMonth = currentVoteMonth();
+        List<VoteTopItem> items = villagerMapper.selectMonthlyRanking(voteMonth);
+        assignRanks(items);
+        return new VoteRankingResponse(voteMonth, items);
     }
 
     @Override
@@ -160,5 +167,11 @@ public class VillagerServiceImpl implements VillagerService {
     private List<Integer> distinctVoteTargets(List<Integer> villagerNos) {
         Set<Integer> distinctNos = new LinkedHashSet<>(villagerNos);
         return new ArrayList<>(distinctNos);
+    }
+
+    private void assignRanks(List<VoteTopItem> items) {
+        for (int i = 0; i < items.size(); i++) {
+            items.get(i).setRank(i + 1);
+        }
     }
 }
