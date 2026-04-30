@@ -91,10 +91,8 @@ gradlew.bat test
 
 ## 참고 사항
 
-- 세션 기반 로그인 방식을 사용합니다.
+- JWT토큰 발급 기반 로그인 방식을 사용합니다.
 - MyBatis 매퍼 XML은 `src/main/resources/mapper` 경로에서 관리합니다.
 - 주민 데이터 동기화 기능은 `Nookipedia API`와 `API_KEY` 환경 변수가 필요합니다.
 - 개발 환경과 배포 환경의 데이터베이스가 다르므로 환경별 설정 분리가 필요합니다.
 - Docker 배포를 위한 `Dockerfile`이 포함되어 있습니다.
-
-

@@ -706,3 +706,8 @@ ADD COLUMN is_admin TINYINT(1) NOT NULL DEFAULT 0;
 UPDATE member
 SET is_admin = 1
 WHERE member_id = 'admin';
+
+DELETE FROM villager_type_code
+WHERE villager_type = 0
+  AND type_name = '기타'
+  AND type_name_en = 'Other';
